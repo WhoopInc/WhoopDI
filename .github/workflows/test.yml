@@ -2,7 +2,7 @@ name: "Test"
 on: [push, pull_request] 
 
 jobs:
-  check_pr:
+  test:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
