@@ -10,7 +10,7 @@ class WhoopDITests: XCTestCase {
     func test_inject() {
         WhoopDI.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", "param")
-        XCTAssertFalse(dependency is DependencyC)
+        XCTAssertTrue(dependency is DependencyC)
     }
     
     func test_inject_generic_integer() {
