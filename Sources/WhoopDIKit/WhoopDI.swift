@@ -1,6 +1,5 @@
 public class WhoopDI: DependencyRegister {
     private static let serviceDict = ServiceDictionary<DependencyDefinition>()
-    // TODO: IOSG-692 Add concept of LocalScope and make this more bullet proof.
     private static var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
     
     /// Registers a list of modules with the DI system.
