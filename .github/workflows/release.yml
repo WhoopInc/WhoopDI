@@ -1,0 +1,26 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  create_release:
+    name: Create Release
+    runs-on: macos-latest
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - name: Create XCFramework
+        uses: unsignedapps/swift-create-xcframework@v2
+      
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifact: *.sha256, *.xcframework
+          allowUpdates: true
+          draft: true
+          generateReleaseNotes: true
+          token: ${{ secrets.GITHUB_TOKEN }}
