@@ -1,7 +1,9 @@
 .DS_Store
+/archives
 /.build
 /Packages
 /*.xcodeproj
 xcuserdata/
 DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
+xcframeworks/
