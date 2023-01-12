@@ -19,7 +19,7 @@ jobs:
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifact: *.sha256, *.xcframework
+          artifact: '*.sha256, *.xcframework'
           allowUpdates: true
           draft: true
           generateReleaseNotes: true
