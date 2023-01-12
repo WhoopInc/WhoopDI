@@ -2,6 +2,8 @@
 public class WhoopDIValidator {
     private let paramsDict = ServiceDictionary<Any>()
     
+    public init() { }
+    
     /// Adds parameters for a dependency type and optional name.
     /// You should use this to provide params to your top level dependencies which need parameters during runtime.
     public func addParams<T>(_ params: Any, forType type: T.Type, andName name: String? = nil) {
