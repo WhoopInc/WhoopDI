@@ -1,5 +1,5 @@
 import XCTest
-@testable import WhoopDI
+@testable import WhoopDIKit
 
 class DependencyDefinitionTests: XCTestCase {
     func test_factory_get_noParams() {

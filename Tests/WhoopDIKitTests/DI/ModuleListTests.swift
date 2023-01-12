@@ -1,5 +1,5 @@
 import XCTest
-@testable import WhoopDI
+@testable import WhoopDIKit
 
 class ModuleListTests: XCTestCase {
     func test_emptyModuleList() {

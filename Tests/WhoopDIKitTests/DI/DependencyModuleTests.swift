@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import WhoopDI
+@testable import WhoopDIKit
 
 class DependencyModuleTests: XCTestCase {
     private let serviceKey = ServiceKey(String.self, name: "name")

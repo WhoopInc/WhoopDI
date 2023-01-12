@@ -1,5 +1,5 @@
 import XCTest
-@testable import WhoopDI
+@testable import WhoopDIKit
 
 final class ServiceDictionaryTests: XCTestCase {
     func test_subscript_typeKey() {

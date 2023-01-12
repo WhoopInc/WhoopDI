@@ -1,5 +1,5 @@
 import XCTest
-@testable import WhoopDI
+@testable import WhoopDIKit
 
 class DependencyErrorTests: XCTestCase {
     private let serviceKey = ServiceKey(String.self)

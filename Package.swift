@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WhoopDI",
+    name: "WhoopDIKit",
     platforms: [
         .macOS(.v11),
         .iOS(.v14),
@@ -12,16 +12,16 @@ let package = Package(
     ],
     products: [
         .library(
-            name: "WhoopDI",
-            targets: ["WhoopDI"])
+            name: "WhoopDIKit",
+            targets: ["WhoopDIKit"])
     ],
     dependencies: [],
     targets: [
         .target(
-            name: "WhoopDI",
+            name: "WhoopDIKit",
             dependencies: []),
         .testTarget(
-            name: "WhoopDITests",
-            dependencies: ["WhoopDI"])
+            name: "WhoopDIKitTests",
+            dependencies: ["WhoopDIKit"])
     ]
 )
