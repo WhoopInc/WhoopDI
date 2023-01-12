@@ -12,7 +12,7 @@ public class WhoopDIValidator {
     }
     
     /// Verifies all definitions in the object graph have definitions for their sub-dependencies  (i.e this verifies the object graph is complete).
-    func validate(onFailure: (Error) -> Void) {
+    public func validate(onFailure: (Error) -> Void) {
         WhoopDI.validate(paramsDict: paramsDict, onFailure: onFailure)
     }
 }
