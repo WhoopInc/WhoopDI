@@ -1,0 +1,3 @@
+[repository]
+enable_tag = true
+enable_push = true
