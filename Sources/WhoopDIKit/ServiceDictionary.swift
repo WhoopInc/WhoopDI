@@ -1,4 +1,4 @@
-public class ServiceDictionary<Value> {
+public final class ServiceDictionary<Value> {
     private var valuesByType: [AnyHashable: Value]
 
     convenience public init() {

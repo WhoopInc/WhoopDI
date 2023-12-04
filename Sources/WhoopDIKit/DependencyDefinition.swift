@@ -15,7 +15,7 @@ fileprivate extension DependencyDefinition {
 }
 
 /// Provides the definition of an object factory. A fresh version of this dependency will be provide each time one is requested.
-class FactoryDefinition: DependencyDefinition {
+final class FactoryDefinition: DependencyDefinition {
     private let factory: (Any?) throws -> Any
     let serviceKey: ServiceKey
     
@@ -30,7 +30,7 @@ class FactoryDefinition: DependencyDefinition {
 }
 
 /// Provides the definition of a singleton object (i.e an object we will only create once per graph).
-class SingletonDefinition: DependencyDefinition {
+final class SingletonDefinition: DependencyDefinition {
     private let factory: (Any?) throws -> Any
     private let lock = NSLock()
     let serviceKey: ServiceKey

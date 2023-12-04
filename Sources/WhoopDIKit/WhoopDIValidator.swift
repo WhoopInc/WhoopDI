@@ -1,5 +1,5 @@
 /// Provides verification that the object graph is complete. This is intended to be called from within a test.
-public class WhoopDIValidator {
+public final class WhoopDIValidator {
     private let paramsDict = ServiceDictionary<Any>()
     
     public init() { }

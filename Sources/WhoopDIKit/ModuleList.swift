@@ -2,6 +2,6 @@ public protocol ModuleList {
     var modules: [DependencyModule] { get }
 }
 
-public class EmptyModuleList: ModuleList {
+public final class EmptyModuleList: ModuleList {
     public var modules: [DependencyModule] { [] }
 }

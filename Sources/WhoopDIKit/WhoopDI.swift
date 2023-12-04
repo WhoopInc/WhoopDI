@@ -1,4 +1,5 @@
-public class WhoopDI: DependencyRegister {
+import Foundation
+public final class WhoopDI: DependencyRegister {
     private static let serviceDict = ServiceDictionary<DependencyDefinition>()
     private static var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
     
@@ -19,6 +20,8 @@ public class WhoopDI: DependencyRegister {
         do {
             return try get(name, params)
         } catch {
+            print("Inject failed with stack trace:")
+            Thread.callStackSymbols.forEach { print($0) }
             fatalError("WhoopDI inject failed with error: \(error)")
         }
     }
@@ -52,7 +55,8 @@ public class WhoopDI: DependencyRegister {
             fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
         }
         // We need to maintain a reference to the local service dictionary because transient dependencies may also
-        // need to references dependencies from it.
+        // need to reference dependencies from it.
+        // ----
         // This is a little dangerous since we are mutating a static variable but it should be fine as long as you
         // don't use `inject { }` within the scope of another `inject { }`.
         let serviceDict = ServiceDictionary<DependencyDefinition>()
