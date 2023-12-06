@@ -11,8 +11,9 @@ let package = Package(
         .watchOS(.v7)
     ],
     products: [
-        .library(name: "WhoopDIKit", targets: ["WhoopDIKit"]),
-        .library(name: "WhoopDIKitStatic", type:.static, targets: ["WhoopDIKit"])
+        .library(
+            name: "WhoopDIKit",
+            targets: ["WhoopDIKit"])
     ],
     dependencies: [],
     targets: [
