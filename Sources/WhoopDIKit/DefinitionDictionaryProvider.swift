@@ -4,16 +4,6 @@ protocol DefinitionDictionaryProvider {
     func provide<T>(_ providerFunc: (ServiceDictionary<DependencyDefinition>) -> T) -> T
 }
 
-extension DefinitionDictionaryProvider {
-    static func standard() -> DefinitionDictionaryProvider {
-        StandardDefinitionDictionaryProvider()
-    }
-    
-    static func threadSafe() -> DefinitionDictionaryProvider {
-        ThreadSafeDefinitionDictionaryProvider()
-    }
-}
-
 struct StandardDefinitionDictionaryProvider: DefinitionDictionaryProvider {
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
     
