@@ -1,11 +1,11 @@
 public final class ServiceDictionary<Value> {
-    private var valuesByType: [AnyHashable: Value]
+    private var valuesByType: [ServiceKey: Value]
 
     convenience public init() {
         self.init(valuesByType: [:])
     }
     
-    private init(valuesByType: [AnyHashable: Value]) {
+    private init(valuesByType: [ServiceKey: Value]) {
         self.valuesByType = valuesByType
     }
 
@@ -27,7 +27,7 @@ public final class ServiceDictionary<Value> {
         }
     }
     
-    public func allKeys() -> Set<AnyHashable> {
+    public func allKeys() -> Set<ServiceKey> {
         Set(valuesByType.keys)
     }
     
