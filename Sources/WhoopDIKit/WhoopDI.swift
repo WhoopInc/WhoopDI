@@ -89,8 +89,7 @@ public final class WhoopDI: DependencyRegister {
     
     /// Used internally via the `WhoopDIValidator` to verify all definitions in the object graph have definitions for their sub-dependencies  (i.e this verifies the object graph is complete).
     internal static func validate(paramsDict: ServiceDictionary<Any>, onFailure: (Error) -> Void) {
-        serviceDict.allKeys().forEach { key in
-            let serviceKey = key as! ServiceKey
+        serviceDict.allKeys().forEach { serviceKey in
             let definition = getDefinition(serviceKey)
             do {
                 let _ = try definition?.get(params: paramsDict[serviceKey])
