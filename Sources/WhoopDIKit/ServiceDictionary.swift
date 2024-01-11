@@ -1,11 +1,11 @@
 public final class ServiceDictionary<Value> {
-    private(set) var valuesByType: [ServiceKey: Value]
+    private var valuesByType: [ServiceKey: Value]
 
     convenience public init() {
         self.init(valuesByType: [:])
     }
     
-    init(valuesByType: [ServiceKey: Value]) {
+    private init(valuesByType: [ServiceKey: Value]) {
         self.valuesByType = valuesByType
     }
 
