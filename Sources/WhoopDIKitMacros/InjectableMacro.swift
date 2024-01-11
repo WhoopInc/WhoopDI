@@ -10,7 +10,6 @@ private struct VariableDeclaration {
     let injectedName: String?
 }
 
-
 struct InjectableMacro: ExtensionMacro, MemberMacro {
     /// Adds the `inject` and `init` function that we use for the `Injectable` protocol
     static func expansion(of node: AttributeSyntax, providingMembersOf declaration: some DeclGroupSyntax, in context: some MacroExpansionContext) throws -> [DeclSyntax] {
@@ -25,10 +24,10 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
             // Only do this for stored properties that are not `let` with a value (since those are constant)
             guard let declSyntax = memberBlock.decl.as(VariableDeclSyntax.self),
                   declSyntax.isStoredProperty,
-                  let propertyName = declSyntax.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text,
-                  let typeName = declSyntax.bindings.first?.typeAnnotation?.type.as(IdentifierTypeSyntax.self)?.name.text,
                   !declSyntax.isLetWithValue,
-                  !declSyntax.isStaticOrLazy
+                  !declSyntax.isStaticOrLazy,
+                  let propertyName = declSyntax.variableName,
+                  let typeName = declSyntax.typeName
             else { return nil }
 
             // If the code has `InjectableName` on it, get the name to use
@@ -194,5 +193,13 @@ extension VariableDeclSyntax {
         self.modifiers.contains { syntax in
             syntax.name.tokenKind == .keyword(.static) || syntax.name.tokenKind == .keyword(.lazy)
         }
+    }
+
+    var variableName: String? {
+        self.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
+    }
+
+    var typeName: String? {
+        self.bindings.first?.typeAnnotation?.type.as(IdentifierTypeSyntax.self)?.name.text
     }
 }
