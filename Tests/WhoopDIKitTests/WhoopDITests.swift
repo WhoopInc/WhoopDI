@@ -109,6 +109,12 @@ class WhoopDITests: XCTestCase {
             XCTFail("DI failed with error: \(error)")
         }
     }
+
+    func test_injecting() {
+        WhoopDI.registerModules(modules: [FakeTestModuleForInjecting()])
+        let testInjecting: TestInjectingThing = WhoopDI.inject()
+        XCTAssertEqual(testInjecting, TestInjectingThing(name: 1))
+    }
 }
 
 class GoodTestModule: DependencyModule {
@@ -187,4 +193,16 @@ fileprivate struct GenericDependency<T>: Dependency {
     init(_ value: T) {
         self.value = value
     }
+}
+
+fileprivate class FakeTestModuleForInjecting: DependencyModule {
+    override func defineDependencies() {
+        factory(name: "FakeName", factory: { 1 })
+    }
+}
+
+@Injectable
+fileprivate struct TestInjectingThing: Equatable {
+    @InjectableName(name: "FakeName")
+    let name: Int
 }
