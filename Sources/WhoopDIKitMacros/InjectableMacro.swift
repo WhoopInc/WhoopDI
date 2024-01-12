@@ -5,7 +5,7 @@ import SwiftSyntaxMacroExpansion
 
 private struct VariableDeclaration {
     let name: String
-    let type: IdentifierTypeSyntax
+    let type: TypeSyntax
     let defaultExpression: ExprSyntax?
     let injectedName: String?
 }
@@ -199,7 +199,7 @@ extension VariableDeclSyntax {
         self.bindings.first?.pattern.as(IdentifierPatternSyntax.self)?.identifier.text
     }
 
-    var typeName: IdentifierTypeSyntax? {
-        self.bindings.first?.typeAnnotation?.type.as(IdentifierTypeSyntax.self)?.trimmed
+    var typeName: TypeSyntax? {
+        self.bindings.first?.typeAnnotation?.type.trimmed
     }
 }

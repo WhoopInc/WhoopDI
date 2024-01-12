@@ -46,6 +46,7 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            let bestThing: Int<String> // This type is not real, but is useful for generics
            lazy var lazyVar: Double = 100
+           let otherStringType: String.Type
         }
         """,
 
@@ -57,13 +58,15 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            let bestThing: Int<String> // This type is not real, but is useful for generics
            lazy var lazyVar: Double = 100
+           let otherStringType: String.Type
 
             public static func inject() -> Self {
-                Self.init(bestThing: WhoopDI.inject(nil))
+                Self.init(bestThing: WhoopDI.inject(nil), otherStringType: WhoopDI.inject(nil))
             }
 
-            public init(bestThing: Int<String>) {
+            public init(bestThing: Int<String>, otherStringType: String.Type) {
                 self.bestThing = bestThing
+                self.otherStringType = otherStringType
             }
         }
 
