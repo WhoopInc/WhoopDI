@@ -200,6 +200,11 @@ extension VariableDeclSyntax {
     }
 
     var typeName: TypeSyntax? {
-        self.bindings.first?.typeAnnotation?.type.trimmed
+        guard let annotationType = self.bindings.first?.typeAnnotation?.type.trimmed else { return nil }
+        if (annotationType.is(FunctionTypeSyntax.self)) {
+            return "@escaping \(annotationType)"
+        } else {
+            return annotationType
+        }
     }
 }

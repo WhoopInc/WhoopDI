@@ -105,4 +105,30 @@ final class InjectableTests: XCTestCase {
         """,
         macros: ["Injectable": InjectableMacro.self])
     }
+
+    func testInjectWithClosures() {
+        assertMacroExpansion(
+            """
+            @Injectable struct ClosureHolder {
+                let closure: () -> String
+            }
+            """,
+            expandedSource: """
+            struct ClosureHolder {
+                let closure: () -> String
+
+                internal static func inject() -> Self {
+                    Self.init(closure: WhoopDI.inject(nil))
+                }
+
+                internal init(closure: @escaping () -> String) {
+                    self.closure = closure
+                }
+            }
+            
+            extension ClosureHolder : Injectable {
+            }
+            """,
+            macros: ["Injectable": InjectableMacro.self])
+    }
 }
