@@ -81,12 +81,15 @@ public final class WhoopDI: DependencyRegister {
                                 _ params: Any? = nil) throws -> T {
         let serviceKey = ServiceKey(T.self, name: name)
         let definition = getDefinition(serviceKey)
-        guard let value = try definition?.get(params: params) as? T else {
+        if let value = try definition?.get(params: params) as? T {
+            return value
+        } else if let injectable = T.self as? any Injectable.Type {
+            return try injectable.inject() as! T
+        } else  {
             throw DependencyError.missingDependecy(ServiceKey(T.self, name: name))
         }
-        return value
     }
-    
+
     /// Used internally via the `WhoopDIValidator` to verify all definitions in the object graph have definitions for their sub-dependencies  (i.e this verifies the object graph is complete).
     internal static func validate(paramsDict: ServiceDictionary<Any>, onFailure: (Error) -> Void) {
         serviceDict.allKeys().forEach { serviceKey in
