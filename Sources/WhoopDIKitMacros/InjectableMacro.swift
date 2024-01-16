@@ -31,12 +31,20 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
         let accessLevel = self.accessLevel(declaration: declaration) ?? "internal"
 
         return [
+            /// Adds the static inject function, such as:
+            /// public static func inject() -> Self {
+            ///     Self.init(myValue: WhoopDI.inject(nil))
+            /// }
             """
             
             \(raw: accessLevel) static func inject() -> Self {
                 Self.init(\(raw: injectingVariables))
             }
             """,
+            /// Adds the memberwise init, such as:
+            /// public init(myValue: String) {
+            ///   self.myValue = myValue
+            /// }
             """
             \(raw: accessLevel) init(\(raw: initializerArgs)) {
                 \(raw: initializerStoring)
