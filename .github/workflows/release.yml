@@ -10,9 +10,9 @@ jobs:
     name: Create Release
         runs-on: macos-13
     steps:
-    - uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode-version: 15.0
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: 15.0
 
       - uses: actions/checkout@v2
 
