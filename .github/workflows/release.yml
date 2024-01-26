@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Create XCFramework
-        uses: WhoopInc/swift-create-xcframework
+        uses: WhoopInc/swift-create-xcframework@1.0
 
       - name: Create release
         uses: ncipollo/release-action@v1
