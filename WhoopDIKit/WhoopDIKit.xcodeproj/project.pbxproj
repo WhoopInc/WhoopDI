@@ -1,0 +1,669 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		617D87AD2BE571080016C977 /* Injectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A12BE571080016C977 /* Injectable.swift */; };
+		617D87AE2BE571080016C977 /* DependencyDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A22BE571080016C977 /* DependencyDefinition.swift */; };
+		617D87AF2BE571080016C977 /* ServiceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A32BE571080016C977 /* ServiceKey.swift */; };
+		617D87B02BE571080016C977 /* ModuleList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A42BE571080016C977 /* ModuleList.swift */; };
+		617D87B12BE571080016C977 /* DependencyTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A52BE571080016C977 /* DependencyTree.swift */; };
+		617D87B22BE571080016C977 /* DependencyError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A62BE571080016C977 /* DependencyError.swift */; };
+		617D87B32BE571080016C977 /* Macros.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A72BE571080016C977 /* Macros.swift */; };
+		617D87B42BE571080016C977 /* WhoopDIValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A82BE571080016C977 /* WhoopDIValidator.swift */; };
+		617D87B52BE571080016C977 /* DependencyModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87A92BE571080016C977 /* DependencyModule.swift */; };
+		617D87B62BE571080016C977 /* DependencyRegister.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87AA2BE571080016C977 /* DependencyRegister.swift */; };
+		617D87B72BE571080016C977 /* ServiceDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87AB2BE571080016C977 /* ServiceDictionary.swift */; };
+		617D87B82BE571080016C977 /* WhoopDI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87AC2BE571080016C977 /* WhoopDI.swift */; };
+		617D87CC2BE571390016C977 /* InjectableNameMacro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87C52BE571390016C977 /* InjectableNameMacro.swift */; };
+		617D87CD2BE571390016C977 /* Plugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87C62BE571390016C977 /* Plugin.swift */; };
+		617D87CE2BE571390016C977 /* InjectableMacro.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87C72BE571390016C977 /* InjectableMacro.swift */; };
+		617D87CF2BE571390016C977 /* VariableDeclSyntax+Injectable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87C92BE571390016C977 /* VariableDeclSyntax+Injectable.swift */; };
+		617D87D02BE571390016C977 /* VariableDeclaration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87CA2BE571390016C977 /* VariableDeclaration.swift */; };
+		617D87D12BE571390016C977 /* AccessControlType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 617D87CB2BE571390016C977 /* AccessControlType.swift */; };
+		617D87D32BE571420016C977 /* WhoopDIKitMacros.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 617D87BE2BE571270016C977 /* WhoopDIKitMacros.framework */; };
+		617D87D42BE571420016C977 /* WhoopDIKitMacros.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 617D87BE2BE571270016C977 /* WhoopDIKitMacros.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		617D87DA2BE5718A0016C977 /* SwiftBasicFormat in Frameworks */ = {isa = PBXBuildFile; productRef = 617D87D92BE5718A0016C977 /* SwiftBasicFormat */; };
+		617D87DC2BE5718A0016C977 /* SwiftCompilerPlugin in Frameworks */ = {isa = PBXBuildFile; productRef = 617D87DB2BE5718A0016C977 /* SwiftCompilerPlugin */; };
+		617D87DE2BE5718A0016C977 /* SwiftCompilerPluginMessageHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 617D87DD2BE5718A0016C977 /* SwiftCompilerPluginMessageHandling */; };
+		617D87E02BE5718A0016C977 /* SwiftDiagnostics in Frameworks */ = {isa = PBXBuildFile; productRef = 617D87DF2BE5718A0016C977 /* SwiftDiagnostics */; };
+		617D87E22BE5718A0016C977 /* SwiftIDEUtils in Frameworks */ = {isa = PBXBuildFile; productRef = 617D87E12BE5718A0016C977 /* SwiftIDEUtils */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		617D87D52BE571420016C977 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 617D878E2BE570D60016C977 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 617D87BD2BE571270016C977;
+			remoteInfo = WhoopDIKitMacros;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		617D87D72BE571420016C977 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				617D87D42BE571420016C977 /* WhoopDIKitMacros.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		617D87972BE570D60016C977 /* WhoopDIKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WhoopDIKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		617D87A12BE571080016C977 /* Injectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Injectable.swift; path = ../../Sources/WhoopDIKit/Injectable.swift; sourceTree = "<group>"; };
+		617D87A22BE571080016C977 /* DependencyDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DependencyDefinition.swift; path = ../../Sources/WhoopDIKit/DependencyDefinition.swift; sourceTree = "<group>"; };
+		617D87A32BE571080016C977 /* ServiceKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceKey.swift; path = ../../Sources/WhoopDIKit/ServiceKey.swift; sourceTree = "<group>"; };
+		617D87A42BE571080016C977 /* ModuleList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ModuleList.swift; path = ../../Sources/WhoopDIKit/ModuleList.swift; sourceTree = "<group>"; };
+		617D87A52BE571080016C977 /* DependencyTree.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DependencyTree.swift; path = ../../Sources/WhoopDIKit/DependencyTree.swift; sourceTree = "<group>"; };
+		617D87A62BE571080016C977 /* DependencyError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DependencyError.swift; path = ../../Sources/WhoopDIKit/DependencyError.swift; sourceTree = "<group>"; };
+		617D87A72BE571080016C977 /* Macros.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Macros.swift; path = ../../Sources/WhoopDIKit/Macros.swift; sourceTree = "<group>"; };
+		617D87A82BE571080016C977 /* WhoopDIValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WhoopDIValidator.swift; path = ../../Sources/WhoopDIKit/WhoopDIValidator.swift; sourceTree = "<group>"; };
+		617D87A92BE571080016C977 /* DependencyModule.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DependencyModule.swift; path = ../../Sources/WhoopDIKit/DependencyModule.swift; sourceTree = "<group>"; };
+		617D87AA2BE571080016C977 /* DependencyRegister.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DependencyRegister.swift; path = ../../Sources/WhoopDIKit/DependencyRegister.swift; sourceTree = "<group>"; };
+		617D87AB2BE571080016C977 /* ServiceDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ServiceDictionary.swift; path = ../../Sources/WhoopDIKit/ServiceDictionary.swift; sourceTree = "<group>"; };
+		617D87AC2BE571080016C977 /* WhoopDI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WhoopDI.swift; path = ../../Sources/WhoopDIKit/WhoopDI.swift; sourceTree = "<group>"; };
+		617D87BE2BE571270016C977 /* WhoopDIKitMacros.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WhoopDIKitMacros.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		617D87C52BE571390016C977 /* InjectableNameMacro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InjectableNameMacro.swift; path = ../../Sources/WhoopDIKitMacros/InjectableNameMacro.swift; sourceTree = "<group>"; };
+		617D87C62BE571390016C977 /* Plugin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Plugin.swift; path = ../../Sources/WhoopDIKitMacros/Plugin.swift; sourceTree = "<group>"; };
+		617D87C72BE571390016C977 /* InjectableMacro.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = InjectableMacro.swift; path = ../../Sources/WhoopDIKitMacros/InjectableMacro.swift; sourceTree = "<group>"; };
+		617D87C92BE571390016C977 /* VariableDeclSyntax+Injectable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "VariableDeclSyntax+Injectable.swift"; sourceTree = "<group>"; };
+		617D87CA2BE571390016C977 /* VariableDeclaration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VariableDeclaration.swift; sourceTree = "<group>"; };
+		617D87CB2BE571390016C977 /* AccessControlType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccessControlType.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		617D87942BE570D60016C977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				617D87D32BE571420016C977 /* WhoopDIKitMacros.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		617D87BB2BE571270016C977 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				617D87DC2BE5718A0016C977 /* SwiftCompilerPlugin in Frameworks */,
+				617D87E02BE5718A0016C977 /* SwiftDiagnostics in Frameworks */,
+				617D87DA2BE5718A0016C977 /* SwiftBasicFormat in Frameworks */,
+				617D87E22BE5718A0016C977 /* SwiftIDEUtils in Frameworks */,
+				617D87DE2BE5718A0016C977 /* SwiftCompilerPluginMessageHandling in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		617D878D2BE570D60016C977 = {
+			isa = PBXGroup;
+			children = (
+				617D87992BE570D60016C977 /* WhoopDIKit */,
+				617D87BF2BE571270016C977 /* WhoopDIKitMacros */,
+				617D87982BE570D60016C977 /* Products */,
+				617D87D22BE571420016C977 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		617D87982BE570D60016C977 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				617D87972BE570D60016C977 /* WhoopDIKit.framework */,
+				617D87BE2BE571270016C977 /* WhoopDIKitMacros.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		617D87992BE570D60016C977 /* WhoopDIKit */ = {
+			isa = PBXGroup;
+			children = (
+				617D87A22BE571080016C977 /* DependencyDefinition.swift */,
+				617D87A62BE571080016C977 /* DependencyError.swift */,
+				617D87A92BE571080016C977 /* DependencyModule.swift */,
+				617D87AA2BE571080016C977 /* DependencyRegister.swift */,
+				617D87A52BE571080016C977 /* DependencyTree.swift */,
+				617D87A12BE571080016C977 /* Injectable.swift */,
+				617D87A72BE571080016C977 /* Macros.swift */,
+				617D87A42BE571080016C977 /* ModuleList.swift */,
+				617D87AB2BE571080016C977 /* ServiceDictionary.swift */,
+				617D87A32BE571080016C977 /* ServiceKey.swift */,
+				617D87AC2BE571080016C977 /* WhoopDI.swift */,
+				617D87A82BE571080016C977 /* WhoopDIValidator.swift */,
+			);
+			path = WhoopDIKit;
+			sourceTree = "<group>";
+		};
+		617D87BF2BE571270016C977 /* WhoopDIKitMacros */ = {
+			isa = PBXGroup;
+			children = (
+				617D87C72BE571390016C977 /* InjectableMacro.swift */,
+				617D87C52BE571390016C977 /* InjectableNameMacro.swift */,
+				617D87C62BE571390016C977 /* Plugin.swift */,
+				617D87C82BE571390016C977 /* Support */,
+			);
+			path = WhoopDIKitMacros;
+			sourceTree = "<group>";
+		};
+		617D87C82BE571390016C977 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				617D87C92BE571390016C977 /* VariableDeclSyntax+Injectable.swift */,
+				617D87CA2BE571390016C977 /* VariableDeclaration.swift */,
+				617D87CB2BE571390016C977 /* AccessControlType.swift */,
+			);
+			name = Support;
+			path = ../../Sources/WhoopDIKitMacros/Support;
+			sourceTree = "<group>";
+		};
+		617D87D22BE571420016C977 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		617D87922BE570D60016C977 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		617D87B92BE571270016C977 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		617D87962BE570D60016C977 /* WhoopDIKit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 617D879E2BE570D60016C977 /* Build configuration list for PBXNativeTarget "WhoopDIKit" */;
+			buildPhases = (
+				617D87922BE570D60016C977 /* Headers */,
+				617D87932BE570D60016C977 /* Sources */,
+				617D87942BE570D60016C977 /* Frameworks */,
+				617D87952BE570D60016C977 /* Resources */,
+				617D87D72BE571420016C977 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				617D87D62BE571420016C977 /* PBXTargetDependency */,
+			);
+			name = WhoopDIKit;
+			productName = WhoopDIKit;
+			productReference = 617D87972BE570D60016C977 /* WhoopDIKit.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		617D87BD2BE571270016C977 /* WhoopDIKitMacros */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 617D87C22BE571270016C977 /* Build configuration list for PBXNativeTarget "WhoopDIKitMacros" */;
+			buildPhases = (
+				617D87B92BE571270016C977 /* Headers */,
+				617D87BA2BE571270016C977 /* Sources */,
+				617D87BB2BE571270016C977 /* Frameworks */,
+				617D87BC2BE571270016C977 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WhoopDIKitMacros;
+			packageProductDependencies = (
+				617D87D92BE5718A0016C977 /* SwiftBasicFormat */,
+				617D87DB2BE5718A0016C977 /* SwiftCompilerPlugin */,
+				617D87DD2BE5718A0016C977 /* SwiftCompilerPluginMessageHandling */,
+				617D87DF2BE5718A0016C977 /* SwiftDiagnostics */,
+				617D87E12BE5718A0016C977 /* SwiftIDEUtils */,
+			);
+			productName = WhoopDIKitMacros;
+			productReference = 617D87BE2BE571270016C977 /* WhoopDIKitMacros.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		617D878E2BE570D60016C977 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastUpgradeCheck = 1510;
+				TargetAttributes = {
+					617D87962BE570D60016C977 = {
+						CreatedOnToolsVersion = 15.1;
+						LastSwiftMigration = 1510;
+					};
+					617D87BD2BE571270016C977 = {
+						CreatedOnToolsVersion = 15.1;
+						LastSwiftMigration = 1510;
+					};
+				};
+			};
+			buildConfigurationList = 617D87912BE570D60016C977 /* Build configuration list for PBXProject "WhoopDIKit" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 617D878D2BE570D60016C977;
+			packageReferences = (
+				617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */,
+			);
+			productRefGroup = 617D87982BE570D60016C977 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				617D87962BE570D60016C977 /* WhoopDIKit */,
+				617D87BD2BE571270016C977 /* WhoopDIKitMacros */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		617D87952BE570D60016C977 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		617D87BC2BE571270016C977 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		617D87932BE570D60016C977 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				617D87B12BE571080016C977 /* DependencyTree.swift in Sources */,
+				617D87B42BE571080016C977 /* WhoopDIValidator.swift in Sources */,
+				617D87B82BE571080016C977 /* WhoopDI.swift in Sources */,
+				617D87AD2BE571080016C977 /* Injectable.swift in Sources */,
+				617D87B62BE571080016C977 /* DependencyRegister.swift in Sources */,
+				617D87B02BE571080016C977 /* ModuleList.swift in Sources */,
+				617D87B72BE571080016C977 /* ServiceDictionary.swift in Sources */,
+				617D87B22BE571080016C977 /* DependencyError.swift in Sources */,
+				617D87B52BE571080016C977 /* DependencyModule.swift in Sources */,
+				617D87B32BE571080016C977 /* Macros.swift in Sources */,
+				617D87AE2BE571080016C977 /* DependencyDefinition.swift in Sources */,
+				617D87AF2BE571080016C977 /* ServiceKey.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		617D87BA2BE571270016C977 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				617D87CE2BE571390016C977 /* InjectableMacro.swift in Sources */,
+				617D87CD2BE571390016C977 /* Plugin.swift in Sources */,
+				617D87CC2BE571390016C977 /* InjectableNameMacro.swift in Sources */,
+				617D87D12BE571390016C977 /* AccessControlType.swift in Sources */,
+				617D87CF2BE571390016C977 /* VariableDeclSyntax+Injectable.swift in Sources */,
+				617D87D02BE571390016C977 /* VariableDeclaration.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		617D87D62BE571420016C977 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 617D87BD2BE571270016C977 /* WhoopDIKitMacros */;
+			targetProxy = 617D87D52BE571420016C977 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		617D879C2BE570D60016C977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		617D879D2BE570D60016C977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		617D879F2BE570D60016C977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.whoop.whoopdi.WhoopDIKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		617D87A02BE570D60016C977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.whoop.whoopdi.WhoopDIKit;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		617D87C32BE571270016C977 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.whoop.whoopdi.WhoopDIKitMacros;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		617D87C42BE571270016C977 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.whoop.whoopdi.WhoopDIKitMacros;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		617D87912BE570D60016C977 /* Build configuration list for PBXProject "WhoopDIKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				617D879C2BE570D60016C977 /* Debug */,
+				617D879D2BE570D60016C977 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		617D879E2BE570D60016C977 /* Build configuration list for PBXNativeTarget "WhoopDIKit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				617D879F2BE570D60016C977 /* Debug */,
+				617D87A02BE570D60016C977 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		617D87C22BE571270016C977 /* Build configuration list for PBXNativeTarget "WhoopDIKitMacros" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				617D87C32BE571270016C977 /* Debug */,
+				617D87C42BE571270016C977 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-syntax.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 509.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		617D87D92BE5718A0016C977 /* SwiftBasicFormat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftBasicFormat;
+		};
+		617D87DB2BE5718A0016C977 /* SwiftCompilerPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftCompilerPlugin;
+		};
+		617D87DD2BE5718A0016C977 /* SwiftCompilerPluginMessageHandling */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftCompilerPluginMessageHandling;
+		};
+		617D87DF2BE5718A0016C977 /* SwiftDiagnostics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftDiagnostics;
+		};
+		617D87E12BE5718A0016C977 /* SwiftIDEUtils */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 617D87D82BE5718A0016C977 /* XCRemoteSwiftPackageReference "swift-syntax" */;
+			productName = SwiftIDEUtils;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 617D878E2BE570D60016C977 /* Project object */;
+}

@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Create XCFramework
-        uses: whoopinc/swift-create-xcframework@bsneed/xcode15_fix
+        run: ./create_xcframework.sh
 
       - name: Create release
         uses: ncipollo/release-action@v1

@@ -14,6 +14,7 @@ let package = Package(
     products: [
         .library(
             name: "WhoopDIKit",
+            type: .static,
             targets: ["WhoopDIKit", "WhoopDIKitMacros"]),
     ],
     dependencies: [
