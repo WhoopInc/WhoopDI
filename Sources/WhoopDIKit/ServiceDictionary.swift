@@ -1,5 +1,8 @@
+import Foundation
+
 public final class ServiceDictionary<Value> {
     private var valuesByType: [ServiceKey: Value]
+    private let queue = DispatchQueue(label: "com.whoop.WhoopDI.serviceDictioanry", attributes: .concurrent)
 
     convenience public init() {
         self.init(valuesByType: [:])
@@ -11,19 +14,27 @@ public final class ServiceDictionary<Value> {
 
     public subscript<T>(key: T.Type) -> Value? {
         get {
-            valuesByType[ServiceKey(key)]
+            queue.sync {
+                valuesByType[ServiceKey(key)]
+            }
         }
         set {
-            valuesByType[ServiceKey(key)] = newValue
+            queue.async(flags: .barrier) {
+                self.valuesByType[ServiceKey(key)] = newValue
+            }
         }
     }
 
     public subscript(key: ServiceKey) -> Value? {
         get {
-            valuesByType[key]
+            queue.sync {
+                valuesByType[key]
+            }
         }
         set {
-            valuesByType[key] = newValue
+            queue.async(flags: .barrier) {
+                self.valuesByType[key] = newValue
+            }
         }
     }
     

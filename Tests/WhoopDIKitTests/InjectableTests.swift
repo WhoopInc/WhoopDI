@@ -1,5 +1,5 @@
 import Foundation
-@testable import WhoopDIKitMacros
+import WhoopDIKitMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
