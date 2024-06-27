@@ -1,6 +1,7 @@
 import Foundation
 
 /// Provides dependencies to the object graph. Modules can be registered with WhoopDI via `WhoopDI.registerModules`.
+@MainActor
 open class DependencyModule {
     private var dependencies: [DependencyDefinition] = []
     
