@@ -2,11 +2,12 @@ import XCTest
 @testable import WhoopDIKit
 
 final class DependencyTreeTests: XCTestCase {
-    
-    override func tearDown() {
-        WhoopDI.removeAllDependencies()
+
+    override func tearDown() async throws {
+        await WhoopDI.removeAllDependencies()
     }
     
+    @MainActor
     func testDepthFirstSearch_SingleList() {
         let moduleD = module("D")
         let moduleC = module("C", dependentModules: [moduleD])
@@ -17,6 +18,7 @@ final class DependencyTreeTests: XCTestCase {
         XCTAssertEqual([moduleD, moduleC, moduleB, moduleA], tree.modules)
     }
     
+    @MainActor
     func testDepthFirstSearch_SingeList_FilterDuplicates() {
         let moduleDuplicate = module("C")
         let moduleC = module("C", dependentModules: [moduleDuplicate])
@@ -27,6 +29,7 @@ final class DependencyTreeTests: XCTestCase {
         XCTAssertEqual([moduleC, moduleB, moduleA], tree.modules)
     }
     
+    @MainActor
     func testDepthFirstSearch_NoDependencyLoop() {
         var loopDependency: [DependencyModule] = []
         let moduleC = KeyedModule(key: "C", keyedModuleDependencies: loopDependency)
@@ -38,6 +41,7 @@ final class DependencyTreeTests: XCTestCase {
         XCTAssertEqual([moduleC, moduleB, moduleA], tree.modules)
     }
     
+    @MainActor
     func testDepthFirstSearch_OneTopLevelModule() {
         let modules = generateTree(rootKey: "A")
         
@@ -58,6 +62,7 @@ final class DependencyTreeTests: XCTestCase {
         XCTAssertEqual(keys, tree.modules.map { $0.serviceKey.name })
     }
     
+    @MainActor
     func testDepthFirstSearch_MultipleTopLevelModules() {
         let modules = generateTree(rootKey: "A") + generateTree(rootKey: "B")
         
@@ -80,6 +85,7 @@ final class DependencyTreeTests: XCTestCase {
         XCTAssertEqual(keys, tree.modules.map { $0.serviceKey.name })
     }
     
+    @MainActor
     func testDepthFirstSearch_DuplicateTopLevelModules() {
         let modules = generateTree(rootKey: "A") + generateTree(rootKey: "A")
         
@@ -102,6 +108,7 @@ final class DependencyTreeTests: XCTestCase {
 }
 
 private extension DependencyTreeTests {
+    @MainActor
     func generateTree(rootKey: String = "", depth: Int = 0) -> [KeyedModule] {
         if depth == 3 { return [] }
         
@@ -112,6 +119,7 @@ private extension DependencyTreeTests {
         }
     }
     
+    @MainActor
     func module(_ name: String, dependentModules: [DependencyModule] = []) -> KeyedModule {
         KeyedModule(key: name, keyedModuleDependencies: dependentModules)
     }
