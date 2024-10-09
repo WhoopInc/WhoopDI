@@ -2,7 +2,6 @@ import Foundation
 
 /// Performs a depth first, post ordered search of the given module's dependency tree and flattens the tree into a list of modules
 /// in which the lowest level modules are ordered first.
-@MainActor
 public final class DependencyTree {
     
     private let dependencyModule: [DependencyModule]

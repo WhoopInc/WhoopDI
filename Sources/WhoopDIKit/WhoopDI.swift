@@ -1,5 +1,4 @@
 import Foundation
-@MainActor
 public final class WhoopDI: DependencyRegister {
     private static let serviceDict = ServiceDictionary<DependencyDefinition>()
     private static var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil

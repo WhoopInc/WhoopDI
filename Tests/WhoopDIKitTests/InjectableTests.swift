@@ -22,7 +22,6 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            let bestThing: Int
 
-            @MainActor
             internal static func inject() -> Self {
                 Self.init(bestThing: WhoopDI.inject("Test"))
             }
@@ -61,7 +60,6 @@ final class InjectableTests: XCTestCase {
            lazy var lazyVar: Double = 100
            let otherStringType: String.Type
 
-            @MainActor
             public static func inject() -> Self {
                 Self.init(bestThing: WhoopDI.inject(nil), otherStringType: WhoopDI.inject(nil))
             }
@@ -93,7 +91,6 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            var bestThing: Int = 1
 
-            @MainActor
             private static func inject() -> Self {
                 Self.init(bestThing: WhoopDI.inject(nil))
             }
@@ -120,7 +117,6 @@ final class InjectableTests: XCTestCase {
             struct ClosureHolder {
                 let closure: () -> String
 
-                @MainActor
                 internal static func inject() -> Self {
                     Self.init(closure: WhoopDI.inject(nil))
                 }

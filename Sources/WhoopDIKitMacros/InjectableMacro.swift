@@ -32,12 +32,11 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
 
         return [
             /// Adds the static inject function, such as:
-            /// @MainActor
             /// public static func inject() -> Self {
             ///     Self.init(myValue: WhoopDI.inject(nil))
             /// }
             """
-            @MainActor
+            
             \(raw: accessLevel) static func inject() -> Self {
                 Self.init(\(raw: injectingVariables))
             }
