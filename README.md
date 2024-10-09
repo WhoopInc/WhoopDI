@@ -110,3 +110,19 @@ class MyDITests: XCTestCase {
     }
 }
 ```
+
+# Building
+
+To build the project, you can use the following command:
+
+```bash
+swift build
+```
+
+To run tests locally, you can use the following command:
+
+```bash
+swift test
+```
+
+You can also open the project folder in Xcode and run the tests from there.
