@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import CompilerPluginSupport
@@ -14,10 +14,10 @@ let package = Package(
     products: [
         .library(
             name: "WhoopDIKit",
-            targets: ["WhoopDIKit", "WhoopDIKitMacros"]),
+            targets: ["WhoopDIKit",]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0")
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest")
     ],
     targets: [
         .target(

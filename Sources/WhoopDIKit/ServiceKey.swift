@@ -1,6 +1,6 @@
 /// Hashable wrapper for a metatype value.
 /// See https://stackoverflow.com/questions/42459484/make-a-swift-dictionary-where-the-key-is-type
-public struct ServiceKey {
+public struct ServiceKey: Sendable {
     public let type: Any.Type
     public let name: String?
     

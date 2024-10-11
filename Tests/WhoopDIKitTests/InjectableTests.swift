@@ -1,7 +1,11 @@
 import Foundation
-@testable import WhoopDIKitMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
+
+// Macro implementations build for the host, so the corresponding module is not available when cross-compiling.
+// Cross-compiled tests may still make use of the macro itself in end-to-end tests.
+#if canImport(WhoopDIKitMacros)
+@testable import WhoopDIKitMacros
 
 final class InjectableTests: XCTestCase {
     func testBasicInject() {
@@ -132,3 +136,4 @@ final class InjectableTests: XCTestCase {
             macros: ["Injectable": InjectableMacro.self])
     }
 }
+#endif

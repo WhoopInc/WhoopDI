@@ -1,7 +1,7 @@
 import Foundation
 public final class WhoopDI: DependencyRegister {
-    private static let serviceDict = ServiceDictionary<DependencyDefinition>()
-    private static var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
+    nonisolated(unsafe) private static let serviceDict = ServiceDictionary<DependencyDefinition>()
+    nonisolated(unsafe) private static var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
     
     /// Registers a list of modules with the DI system.
     /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
