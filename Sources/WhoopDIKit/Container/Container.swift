@@ -3,10 +3,13 @@ public final class Container {
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
     private var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
 
+    public init() {}
+
     /// Registers a list of modules with the DI system.
     /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
     public func registerModules(modules: [DependencyModule]) {
         modules.forEach { module in
+            module.container = self
             module.defineDependencies()
             module.addToServiceDictionary(serviceDict: serviceDict)
         }

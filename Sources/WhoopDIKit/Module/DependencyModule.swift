@@ -3,7 +3,8 @@ import Foundation
 /// Provides dependencies to the object graph. Modules can be registered with WhoopDI via `WhoopDI.registerModules`.
 open class DependencyModule {
     private var dependencies: [DependencyDefinition] = []
-    
+    weak var container: Container? = nil
+
     public init() {
     }
     
@@ -74,7 +75,10 @@ open class DependencyModule {
     ///    }
     /// ```
     public final func get<T>(_ name: String? = nil, params: Any? = nil) throws -> T {
-        return try WhoopDI.get(name, params)
+        guard let container = container else {
+            return try WhoopDI.get(name, params)
+        }
+        return try container.get(name, params)
     }
     
     /// Implement this method to define your dependencies.
