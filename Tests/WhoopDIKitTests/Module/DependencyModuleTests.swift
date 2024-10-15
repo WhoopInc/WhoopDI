@@ -15,7 +15,14 @@ class DependencyModuleTests: XCTestCase {
         let defintion = serviceDict[serviceKey]
         XCTAssertTrue(defintion is FactoryDefinition)
     }
-    
+
+    func test_get_missingContainer_fallsBackOnAppContainer() throws {
+        WhoopDI.registerModules(modules: [GoodTestModule()])
+        let dependencyC: DependencyC = try module.get(params: "params")
+        XCTAssertNotNil(dependencyC)
+        WhoopDI.removeAllDependencies()
+    }
+
     func test_factoryWithParams() {
         module.factoryWithParams(name: "name") { (_: Any) in "dependency" }
         module.addToServiceDictionary(serviceDict: serviceDict)
@@ -40,12 +47,12 @@ class DependencyModuleTests: XCTestCase {
         XCTAssertTrue(defintion is SingletonDefinition)
     }
     
-    func test_ServiceKey_Returns_Subclass_Type() {
+    func test_serviceKey_Returns_Subclass_Type() {
         let testModule = TestDependencyModule(testModuleDependencies: [])
         XCTAssertEqual(testModule.serviceKey, ServiceKey(type(of: TestDependencyModule())))
     }
     
-    func test_SetMultipleModuleDependencies() {
+    func test_setMultipleModuleDependencies() {
         let moduleA = DependencyModule()
         let moduleB = DependencyModule()
         let moduleC = DependencyModule()
@@ -55,14 +62,14 @@ class DependencyModuleTests: XCTestCase {
         XCTAssertEqual(module.moduleDependencies, [moduleD, moduleC, moduleB, moduleA])
     }
     
-    func test_SetSingleModuleDependency() {
+    func test_setSingleModuleDependency() {
         let moduleA = DependencyModule()
         
         let module = TestDependencyModule(testModuleDependencies: [moduleA])
         XCTAssertEqual(module.moduleDependencies, [moduleA])
     }
     
-    func test_SetNoModuleDependencies() {
+    func test_setNoModuleDependencies() {
         let module = TestDependencyModule()
         XCTAssertEqual(module.moduleDependencies, [])
     }
