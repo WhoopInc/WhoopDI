@@ -25,7 +25,7 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
 
         // Creates the whoopdi calls in the `inject` func
         let injectingVariables: String = allVariables.map { variable in
-            "\(variable.name): WhoopDI.inject(\(variable.injectedName.map { "\"\($0)\"" } ?? "nil"))"
+            "\(variable.name): container.inject(\(variable.injectedName.map { "\"\($0)\"" } ?? "nil"))"
         }.joined(separator: ", ")
 
         let accessLevel = self.accessLevel(declaration: declaration) ?? "internal"
@@ -37,7 +37,7 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
             /// }
             """
             
-            \(raw: accessLevel) static func inject() -> Self {
+            \(raw: accessLevel) static func inject(container: Container) -> Self {
                 Self.init(\(raw: injectingVariables))
             }
             """,

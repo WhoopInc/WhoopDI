@@ -1,6 +1,6 @@
 import Foundation
 public final class WhoopDI: DependencyRegister {
-    nonisolated(unsafe) private static let appContainer = Container()
+    nonisolated(unsafe) static let appContainer = Container()
     
     /// Registers a list of modules with the DI system.
     /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.

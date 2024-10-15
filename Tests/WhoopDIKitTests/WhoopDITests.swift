@@ -112,7 +112,7 @@ class WhoopDITests: XCTestCase {
 
     func test_injecting() {
         WhoopDI.registerModules(modules: [FakeTestModuleForInjecting()])
-        let testInjecting: TestInjectingThing = WhoopDI.inject()
-        XCTAssertEqual(testInjecting, TestInjectingThing(name: 1))
+        let testInjecting: InjectableWithNamedDependency = WhoopDI.inject()
+        XCTAssertEqual(testInjecting, InjectableWithNamedDependency(name: 1))
     }
 }
