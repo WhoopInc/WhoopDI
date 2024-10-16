@@ -45,11 +45,16 @@ class ContainerTests: XCTestCase {
         }
         XCTAssertTrue(dependency is DependencyB)
     }
-
-    func test_injecting() throws {
-        throw XCTSkip("TODO: implement once WhoopDI uses a DI container")
+    
+    func test_injectableWithDependency() throws {
         container.registerModules(modules: [FakeTestModuleForInjecting()])
-        let testInjecting: TestInjectingThing = container.inject()
-        XCTAssertEqual(testInjecting, TestInjectingThing(name: 1))
+        let testInjecting: InjectableWithDependency = container.inject()
+        XCTAssertEqual(testInjecting, InjectableWithDependency(dependency: DependencyA()))
+    }
+
+    func test_injectableWithNamedDependency() throws {
+        container.registerModules(modules: [FakeTestModuleForInjecting()])
+        let testInjecting: InjectableWithNamedDependency = container.inject()
+        XCTAssertEqual(testInjecting, InjectableWithNamedDependency(name: 1))
     }
 }

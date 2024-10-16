@@ -49,7 +49,7 @@ class NilSingletonModule: DependencyModule {
 
 protocol Dependency { }
 
-class DependencyA: Dependency { }
+struct DependencyA: Dependency, Equatable { }
 
 class DependencyB: Dependency {
     private let param: String
@@ -81,12 +81,19 @@ struct GenericDependency<T>: Dependency {
 
 class FakeTestModuleForInjecting: DependencyModule {
     override func defineDependencies() {
+        factory { DependencyA() }
         factory(name: "FakeName", factory: { 1 })
     }
 }
 
 @Injectable
-struct TestInjectingThing: Equatable {
+struct InjectableWithDependency: Equatable {
+    private let dependency: DependencyA
+}
+
+@Injectable
+struct InjectableWithNamedDependency: Equatable {
     @InjectableName(name: "FakeName")
     let name: Int
 }
+

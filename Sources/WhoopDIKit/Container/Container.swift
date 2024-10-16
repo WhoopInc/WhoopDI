@@ -87,7 +87,7 @@ public final class Container {
         if let value = try definition?.get(params: params) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
-            return try injectable.inject() as! T
+            return try injectable.inject(container: self) as! T
         } else  {
             throw DependencyError.missingDependecy(ServiceKey(T.self, name: name))
         }

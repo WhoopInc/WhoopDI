@@ -26,8 +26,8 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            let bestThing: Int
 
-            internal static func inject() -> Self {
-                Self.init(bestThing: WhoopDI.inject("Test"))
+            internal static func inject(container: Container) -> Self {
+                Self.init(bestThing: container.inject("Test"))
             }
 
             internal init(bestThing: Int) {
@@ -64,8 +64,8 @@ final class InjectableTests: XCTestCase {
            lazy var lazyVar: Double = 100
            let otherStringType: String.Type
 
-            public static func inject() -> Self {
-                Self.init(bestThing: WhoopDI.inject(nil), otherStringType: WhoopDI.inject(nil))
+            public static func inject(container: Container) -> Self {
+                Self.init(bestThing: container.inject(nil), otherStringType: container.inject(nil))
             }
 
             public init(bestThing: Int<String>, otherStringType: String.Type) {
@@ -95,8 +95,8 @@ final class InjectableTests: XCTestCase {
            var newerThing: String { "not again" }
            var bestThing: Int = 1
 
-            private static func inject() -> Self {
-                Self.init(bestThing: WhoopDI.inject(nil))
+            private static func inject(container: Container) -> Self {
+                Self.init(bestThing: container.inject(nil))
             }
 
             private init(bestThing: Int = 1) {
@@ -121,8 +121,8 @@ final class InjectableTests: XCTestCase {
             struct ClosureHolder {
                 let closure: () -> String
 
-                internal static func inject() -> Self {
-                    Self.init(closure: WhoopDI.inject(nil))
+                internal static func inject(container: Container) -> Self {
+                    Self.init(closure: container.inject(nil))
                 }
 
                 internal init(closure: @escaping () -> String) {
