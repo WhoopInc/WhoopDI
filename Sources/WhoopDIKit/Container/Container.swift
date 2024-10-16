@@ -1,9 +1,15 @@
 import Foundation
 public final class Container {
+    private let localDependencyGraph: ThreadSafeDependencyGraph
+    private var isLocalInjectActive: Bool = false
+    private let options: WhoopDIOptionProvider
+    
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
-    private var localServiceDict: ServiceDictionary<DependencyDefinition>? = nil
 
-    public init() {}
+    public init(options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
+        self.options = options
+        localDependencyGraph = ThreadSafeDependencyGraph(options: options)
+    }
 
     /// Registers a list of modules with the DI system.
     /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
@@ -54,28 +60,30 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
-        guard localServiceDict == nil else {
+        guard !isLocalInjectActive else {
             fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
+        }
+        
+        isLocalInjectActive = true
+        defer {
+            isLocalInjectActive = false
+            localDependencyGraph.resetDependencyGraph()
         }
         // We need to maintain a reference to the local service dictionary because transient dependencies may also
         // need to reference dependencies from it.
         // ----
-        // This is a little dangerous since we are mutating a static variable but it should be fine as long as you
+        // This is a little dangerous since we are mutating a variable but it should be fine as long as you
         // don't use `inject { }` within the scope of another `inject { }`.
-        let serviceDict = ServiceDictionary<DependencyDefinition>()
-        localServiceDict = serviceDict
-        defer {
-            localServiceDict = nil
-        }
-
-        let localModule = DependencyModule()
-        localDefinition(localModule)
-        localModule.addToServiceDictionary(serviceDict: serviceDict)
-
-        do {
-            return try get(name, params)
-        } catch {
-            fatalError("WhoopDI inject failed with error: \(error)")
+        return localDependencyGraph.aquireDependencyGraph { localServiceDict in
+            let localModule = DependencyModule()
+            localDefinition(localModule)
+            localModule.addToServiceDictionary(serviceDict: localServiceDict)
+            
+            do {
+                return try get(name, params)
+            } catch {
+                fatalError("WhoopDI inject failed with error: \(error)")
+            }
         }
     }
 
@@ -89,7 +97,7 @@ public final class Container {
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T
         } else  {
-            throw DependencyError.missingDependecy(ServiceKey(T.self, name: name))
+            throw DependencyError.missingDependency(ServiceKey(T.self, name: name))
         }
     }
 
@@ -106,7 +114,9 @@ public final class Container {
     }
 
     private func getDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
-        return localServiceDict?[serviceKey] ?? serviceDict[serviceKey]
+        localDependencyGraph.aquireDependencyGraph { localServiceDict in
+            return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
+        }
     }
 
     public func removeAllDependencies() {

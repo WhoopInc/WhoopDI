@@ -1,77 +1,96 @@
 import Foundation
-import XCTest
+import Testing
 @testable import WhoopDIKit
 
-class DependencyModuleTests: XCTestCase {
+@Suite(.serialized)
+class DependencyModuleTests {
     private let serviceKey = ServiceKey(String.self, name: "name")
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
     
     private let module = DependencyModule()
     
-    func test_factory() {
+    @Test
+    func defineDependencies_defaultDoesNothing() {
+        module.defineDependencies()
+        module.addToServiceDictionary(serviceDict: serviceDict)
+        #expect(serviceDict.allKeys().isEmpty)
+    }
+    
+    @Test
+    func factory() {
         module.factory(name: "name") { "dependency" }
         module.addToServiceDictionary(serviceDict: serviceDict)
         
         let defintion = serviceDict[serviceKey]
-        XCTAssertTrue(defintion is FactoryDefinition)
+        #expect(defintion is FactoryDefinition)
     }
 
-    func test_get_missingContainer_fallsBackOnAppContainer() throws {
+    @Test
+    func get_missingContainer_fallsBackOnAppContainer() throws {
         WhoopDI.registerModules(modules: [GoodTestModule()])
+        
         let dependencyC: DependencyC = try module.get(params: "params")
-        XCTAssertNotNil(dependencyC)
+        #expect(dependencyC != nil)
+        
         WhoopDI.removeAllDependencies()
     }
 
-    func test_factoryWithParams() {
+    @Test
+    func factoryWithParams() {
         module.factoryWithParams(name: "name") { (_: Any) in "dependency" }
         module.addToServiceDictionary(serviceDict: serviceDict)
         
         let defintion = serviceDict[serviceKey]
-        XCTAssertTrue(defintion is FactoryDefinition)
+        #expect(defintion is FactoryDefinition)
     }
     
-    func test_singleton() {
+    @Test
+    func singleton() {
         module.singleton(name: "name") { "dependency" }
         module.addToServiceDictionary(serviceDict: serviceDict)
         
         let defintion = serviceDict[serviceKey]
-        XCTAssertTrue(defintion is SingletonDefinition)
+        #expect(defintion is SingletonDefinition)
     }
     
-    func test_singletonWithParams() {
+    @Test
+    func singletonWithParams() {
         module.singletonWithParams(name: "name") { (_: Any) in "dependency" }
         module.addToServiceDictionary(serviceDict: serviceDict)
         
         let defintion = serviceDict[serviceKey]
-        XCTAssertTrue(defintion is SingletonDefinition)
+        #expect(defintion is SingletonDefinition)
     }
     
-    func test_serviceKey_Returns_Subclass_Type() {
+    @Test
+    func serviceKey_Returns_Subclass_Type() {
         let testModule = TestDependencyModule(testModuleDependencies: [])
-        XCTAssertEqual(testModule.serviceKey, ServiceKey(type(of: TestDependencyModule())))
+        #expect(testModule.serviceKey == ServiceKey(type(of: TestDependencyModule())))
     }
     
-    func test_setMultipleModuleDependencies() {
+    @Test
+    func setMultipleModuleDependencies() {
         let moduleA = DependencyModule()
         let moduleB = DependencyModule()
         let moduleC = DependencyModule()
         let moduleD = DependencyModule()
         
         let module = TestDependencyModule(testModuleDependencies: [moduleD, moduleC, moduleB, moduleA])
-        XCTAssertEqual(module.moduleDependencies, [moduleD, moduleC, moduleB, moduleA])
+        #expect(module.moduleDependencies == [moduleD, moduleC, moduleB, moduleA])
     }
     
-    func test_setSingleModuleDependency() {
+    @Test
+    func setSingleModuleDependency() {
         let moduleA = DependencyModule()
         
         let module = TestDependencyModule(testModuleDependencies: [moduleA])
-        XCTAssertEqual(module.moduleDependencies, [moduleA])
+        #expect(module.moduleDependencies == [moduleA])
     }
     
-    func test_setNoModuleDependencies() {
+    @Test
+    func setNoModuleDependencies() {
         let module = TestDependencyModule()
-        XCTAssertEqual(module.moduleDependencies, [])
+        #expect(module.moduleDependencies.isEmpty)
     }
 }
 

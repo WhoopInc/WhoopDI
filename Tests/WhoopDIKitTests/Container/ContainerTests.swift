@@ -1,60 +1,94 @@
-import XCTest
+import Testing
 @testable import WhoopDIKit
 
-class ContainerTests: XCTestCase {
-    private let container = Container()
+// This is unchecked Sendable so we can run our local inject concurrency test
+@Suite(.serialized)
+class ContainerTests: @unchecked Sendable {
+    private let container: Container
+    
+    init() {
+        let options = MockOptionProvider(options: [.threadSafeLocalInject: true])
+        container = Container(options: options)
+    }
 
-    func test_inject() {
+    @Test
+    func inject() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", "param")
-        XCTAssertTrue(dependency is DependencyC)
+        #expect(dependency is DependencyC)
     }
 
-    func test_inject_generic_integer() {
+    @Test
+    func inject_generic_integer() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<Int> = container.inject()
-        XCTAssertEqual(42, dependency.value)
+        #expect(42 == dependency.value)
     }
 
-    func test_inject_generic_string() {
+    @Test
+    func inject_generic_string() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<String> = container.inject()
-        XCTAssertEqual("string", dependency.value)
+        #expect("string" == dependency.value)
     }
 
-    func test_inject_localDefinition() {
+    @Test
+    func inject_localDefinition() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory") { module in
             // Typically you'd override or provide a transient dependency. I'm using the top level dependency here
             // for the sake of simplicity.
             module.factory(name: "C_Factory") { DependencyA() as Dependency }
         }
-        XCTAssertTrue(dependency is DependencyA)
+        #expect(dependency is DependencyA)
+    }
+    
+    @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/13"))
+    func inject_localDefinition_concurrency() async {
+        // You can run this test repeatedly to verify we don't have a concurrency issue when
+        // performing a local inject. 1000 times should do the trick.
+        container.registerModules(modules: [GoodTestModule()])
+        
+        async let resultA = Task {
+            let _: Dependency = container.inject("C_Factory") { module in
+                module.factory(name: "C_Factory") { DependencyA() as Dependency }
+            }
+        }.result
+        
+        async let resultB = Task {
+            let _: DependencyA = container.inject()
+        }.result
+        
+        let _ = await [resultA, resultB]
     }
 
-    func test_inject_localDefinition_noOverride() {
+    @Test
+    func inject_localDefinition_noOverride() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", params: "params") { _ in }
-        XCTAssertTrue(dependency is DependencyC)
+        #expect(dependency is DependencyC)
     }
 
-    func test_inject_localDefinition_withParams() {
+    @Test
+    func inject_localDefinition_withParams() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", params: "params") { module in
             module.factoryWithParams(name: "C_Factory") { params in DependencyB(params) as Dependency }
         }
-        XCTAssertTrue(dependency is DependencyB)
+        #expect(dependency is DependencyB)
     }
     
-    func test_injectableWithDependency() throws {
+    @Test
+    func injectableWithDependency() throws {
         container.registerModules(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithDependency = container.inject()
-        XCTAssertEqual(testInjecting, InjectableWithDependency(dependency: DependencyA()))
+        #expect(testInjecting == InjectableWithDependency(dependency: DependencyA()))
     }
 
-    func test_injectableWithNamedDependency() throws {
+    @Test
+    func injectableWithNamedDependency() throws {
         container.registerModules(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithNamedDependency = container.inject()
-        XCTAssertEqual(testInjecting, InjectableWithNamedDependency(name: 1))
+        #expect(testInjecting == InjectableWithNamedDependency(name: 1))
     }
 }
