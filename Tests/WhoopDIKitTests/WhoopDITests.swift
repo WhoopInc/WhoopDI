@@ -1,17 +1,14 @@
 import Testing
 @testable import WhoopDIKit
 
-@Suite(.serialized)
+@MainActor
 class WhoopDITests {
-    deinit {
-        WhoopDI.removeAllDependencies()
-    }
-    
     @Test
     func inject() {
         WhoopDI.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", "param")
         #expect(dependency is DependencyC)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -19,6 +16,7 @@ class WhoopDITests {
         WhoopDI.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<Int> = WhoopDI.inject()
         #expect(42 == dependency.value)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -26,6 +24,7 @@ class WhoopDITests {
         WhoopDI.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<String> = WhoopDI.inject()
         #expect("string" == dependency.value)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -37,6 +36,7 @@ class WhoopDITests {
             module.factory(name: "C_Factory") { DependencyA() as Dependency }
         }
         #expect(dependency is DependencyA)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -53,6 +53,7 @@ class WhoopDITests {
         #expect(dependency1 is DependencyA)
         #expect(dependency2 is DependencyC)
         #expect(dependency3 is DependencyB)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -60,6 +61,7 @@ class WhoopDITests {
         WhoopDI.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", params: "params") { _ in }
         #expect(dependency is DependencyC)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -69,6 +71,7 @@ class WhoopDITests {
             module.factoryWithParams(name: "C_Factory") { params in DependencyB(params) as Dependency }
         }
         #expect(dependency is DependencyB)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -76,12 +79,14 @@ class WhoopDITests {
         WhoopDI.registerModules(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithNamedDependency = WhoopDI.inject()
         #expect(testInjecting == InjectableWithNamedDependency(name: 1))
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
     func setup() {
         // Verify nothing explocdes
         WhoopDI.setup(options: DefaultOptionProvider())
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -91,6 +96,7 @@ class WhoopDITests {
         var failed = false
         validator.validate { error in failed = true }
         #expect(failed)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -105,6 +111,7 @@ class WhoopDITests {
             failed = true
         }
         #expect(failed)
+        WhoopDI.removeAllDependencies()
     }
     
     
@@ -120,6 +127,7 @@ class WhoopDITests {
             failed = true
         }
         #expect(failed)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -134,6 +142,7 @@ class WhoopDITests {
             failed = true
         }
         #expect(failed)
+        WhoopDI.removeAllDependencies()
     }
     
     @Test
@@ -149,5 +158,6 @@ class WhoopDITests {
         validator.validate { error in
             Issue.record("DI failed with error: \(error)")
         }
+        WhoopDI.removeAllDependencies()
     }
 }

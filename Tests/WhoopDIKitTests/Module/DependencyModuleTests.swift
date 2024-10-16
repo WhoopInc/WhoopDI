@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import WhoopDIKit
 
-@Suite(.serialized)
+@MainActor
 class DependencyModuleTests {
     private let serviceKey = ServiceKey(String.self, name: "name")
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
