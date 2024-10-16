@@ -3,7 +3,6 @@ import Testing
 
 @Suite(.serialized)
 class WhoopDITests {
-    
     deinit {
         WhoopDI.removeAllDependencies()
     }

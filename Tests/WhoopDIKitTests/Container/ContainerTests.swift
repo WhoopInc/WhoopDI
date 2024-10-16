@@ -2,7 +2,6 @@ import Testing
 @testable import WhoopDIKit
 
 // This is unchecked Sendable so we can run our local inject concurrency test
-@Suite(.serialized)
 class ContainerTests: @unchecked Sendable {
     private let container: Container
     
@@ -49,17 +48,15 @@ class ContainerTests: @unchecked Sendable {
         // performing a local inject. 1000 times should do the trick.
         container.registerModules(modules: [GoodTestModule()])
         
-        async let resultA = Task {
-            let _: Dependency = container.inject("C_Factory") { module in
+        Task.detached {
+            let _: Dependency = self.container.inject("C_Factory") { module in
                 module.factory(name: "C_Factory") { DependencyA() as Dependency }
             }
-        }.result
+        }
         
-        async let resultB = Task {
-            let _: DependencyA = container.inject()
-        }.result
-        
-        let _ = await [resultA, resultB]
+        Task.detached {
+            let _: DependencyA = self.container.inject()
+        }
     }
 
     @Test

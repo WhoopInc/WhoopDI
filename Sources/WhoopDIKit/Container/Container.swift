@@ -60,21 +60,18 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
-        guard !isLocalInjectActive else {
-            fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
-        }
-        
-        isLocalInjectActive = true
-        defer {
-            isLocalInjectActive = false
-            localDependencyGraph.resetDependencyGraph()
-        }
-        // We need to maintain a reference to the local service dictionary because transient dependencies may also
-        // need to reference dependencies from it.
-        // ----
-        // This is a little dangerous since we are mutating a variable but it should be fine as long as you
-        // don't use `inject { }` within the scope of another `inject { }`.
         return localDependencyGraph.aquireDependencyGraph { localServiceDict in
+            // Nested local injects are not currently supported. Fail fast here.
+            guard !isLocalInjectActive else {
+                fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
+            }
+            
+            isLocalInjectActive = true
+            defer {
+                isLocalInjectActive = false
+                localDependencyGraph.resetDependencyGraph()
+            }
+            
             let localModule = DependencyModule()
             localDefinition(localModule)
             localModule.addToServiceDictionary(serviceDict: localServiceDict)
@@ -82,6 +79,8 @@ public final class Container {
             do {
                 return try get(name, params)
             } catch {
+                print("Inject failed with stack trace:")
+                Thread.callStackSymbols.forEach { print($0) }
                 fatalError("WhoopDI inject failed with error: \(error)")
             }
         }
