@@ -2,8 +2,6 @@ import Testing
 @testable import WhoopDIKit
 
 struct ThreadSafeDependencyGraphTests {
-    private let key = "key"
-    
     @Test(arguments: [false, true])
     func aquireDependencyGraph_notThreadSafe(threadsafe: Bool) {
         let options = MockOptionProvider(options: [.threadSafeLocalInject: threadsafe])
