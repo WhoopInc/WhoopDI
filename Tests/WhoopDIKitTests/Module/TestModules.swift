@@ -49,11 +49,7 @@ class NilSingletonModule: DependencyModule {
 
 protocol Dependency { }
 
-class DependencyA: Dependency, Equatable {
-    static func == (lhs: DependencyA, rhs: DependencyA) -> Bool {
-        true
-    }
-}
+struct DependencyA: Dependency, Equatable { }
 
 class DependencyB: Dependency {
     private let param: String
