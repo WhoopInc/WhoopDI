@@ -16,13 +16,9 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Create XCFramework
-        run: ./create_xcframework.sh
-
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
-          artifact: '*.sha256, *.zip'
           allowUpdates: true
           draft: true
           generateReleaseNotes: true
