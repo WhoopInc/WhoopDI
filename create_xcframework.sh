@@ -1,3 +1,5 @@
+set -e
+
 xcodebuild archive -project WhoopDIKit/WhoopDIKit.xcodeproj -scheme WhoopDIKit -destination "generic/platform=iOS" -archivePath "archives/WhoopDIKit-ios.xcarchive"
 xcodebuild archive -project WhoopDIKit/WhoopDIKit.xcodeproj -scheme WhoopDIKit -destination "generic/platform=iOS Simulator" -archivePath "archives/WhoopDIKit-iosSimulator.xcarchive"
 
