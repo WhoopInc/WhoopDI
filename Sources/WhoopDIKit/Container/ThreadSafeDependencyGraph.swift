@@ -9,7 +9,7 @@ final class ThreadSafeDependencyGraph: Sendable {
         self.options = options
     }
     
-    func aquireDependencyGraph<T>(block: (ServiceDictionary<DependencyDefinition>) -> T) -> T {
+    func acquireDependencyGraph<T>(block: (ServiceDictionary<DependencyDefinition>) -> T) -> T {
         let threadSafe = options.isOptionEnabled(.threadSafeLocalInject)
         if threadSafe {
             lock.lock()

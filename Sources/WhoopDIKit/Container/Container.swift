@@ -60,7 +60,7 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
-        return localDependencyGraph.aquireDependencyGraph { localServiceDict in
+        return localDependencyGraph.acquireDependencyGraph { localServiceDict in
             // Nested local injects are not currently supported. Fail fast here.
             guard !isLocalInjectActive else {
                 fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
@@ -113,7 +113,7 @@ public final class Container {
     }
 
     private func getDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
-        localDependencyGraph.aquireDependencyGraph { localServiceDict in
+        localDependencyGraph.acquireDependencyGraph { localServiceDict in
             return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
         }
     }
