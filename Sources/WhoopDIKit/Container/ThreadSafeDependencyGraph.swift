@@ -1,8 +1,8 @@
 import Foundation
 
-final class ThreadSafeDependencyGraph: Sendable {
+final class ThreadSafeDependencyGraph: @unchecked Sendable {
     private let lock = NSRecursiveLock()
-    nonisolated(unsafe) private let serviceDict: ServiceDictionary<DependencyDefinition> = .init()
+    private let serviceDict: ServiceDictionary<DependencyDefinition> = .init()
     private let options: WhoopDIOptionProvider
     
     init(options: WhoopDIOptionProvider) {

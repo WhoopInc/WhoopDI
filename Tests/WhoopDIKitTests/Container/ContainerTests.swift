@@ -44,18 +44,22 @@ class ContainerTests: @unchecked Sendable {
     
     @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/13"))
     func inject_localDefinition_concurrency() async {
-        // You can run this test repeatedly to verify we don't have a concurrency issue when
-        // performing a local inject. 1000 times should do the trick.
         container.registerModules(modules: [GoodTestModule()])
-        
-        Task.detached {
-            let _: Dependency = self.container.inject("C_Factory") { module in
-                module.factory(name: "C_Factory") { DependencyA() as Dependency }
+        // Run many times to try and capture race condition
+        for _ in 0..<500 {
+            let taskA = Task.detached {
+                let _: Dependency = self.container.inject("C_Factory") { module in
+                    module.factory(name: "C_Factory") { DependencyA() as Dependency }
+                }
             }
-        }
-        
-        Task.detached {
-            let _: DependencyA = self.container.inject()
+
+            let taskB = Task.detached {
+                let _: DependencyA = self.container.inject()
+            }
+
+            for task in [taskA, taskB] {
+                let _ = await task.result
+            }
         }
     }
 
