@@ -1,8 +1,9 @@
-import XCTest
+import Testing
 @testable import WhoopDIKit
 
-class ModuleListTests: XCTestCase {
-    func test_emptyModuleList() {
-        XCTAssertTrue(EmptyModuleList().modules.isEmpty)
+class ModuleListTests {
+    @Test
+    func emptyModuleList() {
+        #expect(EmptyModuleList().modules.isEmpty)
     }
 }
