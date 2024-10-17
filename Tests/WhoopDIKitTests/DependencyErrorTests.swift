@@ -17,15 +17,15 @@ class DependencyErrorTests: XCTestCase {
         XCTAssertEqual(expected, error.description)
     }
     
-    func test_description_missingDependecy_noServiceKeyName() {
+    func test_description_missingDependency_noServiceKeyName() {
         let expected = "Missing dependency for String with name: <no name>"
-        let error = DependencyError.missingDependecy(serviceKey)
+        let error = DependencyError.missingDependency(serviceKey)
         XCTAssertEqual(expected, error.description)
     }
     
-    func test_description_missingDependecy_withServiceKeyName() {
+    func test_description_missingDependency_withServiceKeyName() {
         let expected = "Missing dependency for String with name: name"
-        let error = DependencyError.missingDependecy(serviceKeyWithName)
+        let error = DependencyError.missingDependency(serviceKeyWithName)
         XCTAssertEqual(expected, error.description)
     }
     
