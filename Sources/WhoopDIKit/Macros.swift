@@ -10,3 +10,7 @@ public macro Injectable() = #externalMacro(module: "WhoopDIKitMacros", type: "In
 /// The `@InjectableName` macro is used as a marker for the `@Injectable` protocol to add a `WhoopDI.inject(name)` in the inject method
 @attached(peer)
 public macro InjectableName(name: String) = #externalMacro(module: "WhoopDIKitMacros", type: "InjectableNameMacro")
+
+/// The `@InjectableInit` macro is used as a marker for the `@Injectable` protocol to use as the init for the static `inject` function
+@attached(peer)
+public macro InjectableInit() = #externalMacro(module: "WhoopDIKitMacros", type: "InjectableInitMacro")
