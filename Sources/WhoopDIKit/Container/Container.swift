@@ -1,4 +1,5 @@
 import Foundation
+
 public final class Container {
     private let localDependencyGraph: ThreadSafeDependencyGraph
     private var isLocalInjectActive: Bool = false
@@ -60,6 +61,19 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
+        if options.isOptionEnabled(.taskLocalInject) {
+            let localModule = DependencyModule()
+            localDefinition(localModule)
+            return ServiceDictionaryTaskLocal.dictionary.withDependencyModuleUpdates(dependencyModule: localModule) {
+                do {
+                    return try get(name, params)
+                } catch {
+                    print("Inject failed with stack trace:")
+                    Thread.callStackSymbols.forEach { print($0) }
+                    fatalError("WhoopDI inject failed with error: \(error)")
+                }
+            }
+        }
         return localDependencyGraph.acquireDependencyGraph { localServiceDict in
             // Nested local injects are not currently supported. Fail fast here.
             guard !isLocalInjectActive else {
@@ -113,8 +127,12 @@ public final class Container {
     }
 
     private func getDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
-        localDependencyGraph.acquireDependencyGraph { localServiceDict in
-            return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
+        if options.isOptionEnabled(.taskLocalInject) {
+            ServiceDictionaryTaskLocal.dictionary.getDependencyModule()?[serviceKey] ?? serviceDict[serviceKey]
+        } else {
+            localDependencyGraph.acquireDependencyGraph { localServiceDict in
+                return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
+            }
         }
     }
 
