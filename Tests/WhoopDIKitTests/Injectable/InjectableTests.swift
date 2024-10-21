@@ -58,7 +58,6 @@ final class InjectableTests: XCTestCase {
         """
         struct TestThing {
            let bestThing: Int
-        
            internal init(notReal: Int, _ extraArg: String) {
                self.bestThing = notReal
            }
