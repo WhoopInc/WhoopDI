@@ -26,7 +26,11 @@ public final class ServiceDictionary<Value> {
             valuesByType[key] = newValue
         }
     }
-    
+
+    public func copy() -> Self {
+        return Self(valuesByType: self.valuesByType)
+    }
+
     public func allKeys() -> Set<ServiceKey> {
         Set(valuesByType.keys)
     }
