@@ -1,6 +1,6 @@
 import Foundation
 public final class WhoopDI: DependencyRegister {
-    nonisolated(unsafe) private static var appContainer = Container()
+    nonisolated(unsafe) public private(set) static var appContainer = Container()
 
     /// Setup WhoopDI with the supplied options.
     /// This should only be called once when your application launches (and before WhoopDI is used).
