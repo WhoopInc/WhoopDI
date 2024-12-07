@@ -73,6 +73,7 @@ public final class Container {
             }
             
             let localModule = DependencyModule()
+            localModule.container = self
             localDefinition(localModule)
             localModule.addToServiceDictionary(serviceDict: localServiceDict)
             
