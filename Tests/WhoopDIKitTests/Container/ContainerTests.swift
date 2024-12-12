@@ -41,7 +41,21 @@ class ContainerTests: @unchecked Sendable {
         }
         #expect(dependency is DependencyA)
     }
-    
+
+    @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/23"))
+    func inject_localDefinition_dependenciesWithinLocalModule() {
+        container.registerModules(modules: [BadTestModule()])
+        let dependency: Dependency = container.inject("C_Factory", params: "params") { module in
+            module.factoryWithParams(name: "C_Factory") { params in
+                DependencyC(proto: try module.get("A_Factory"),
+                            concrete: try module.get(params: params)) as Dependency
+            }
+            module.factory(name: "A_Factory") { DependencyA() as Dependency }
+            module.factoryWithParams { params in DependencyB(params) }
+        }
+        #expect(dependency is DependencyC)
+    }
+
     @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/13"))
     func inject_localDefinition_concurrency() async {
         container.registerModules(modules: [GoodTestModule()])
