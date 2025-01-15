@@ -52,6 +52,33 @@ A few interesting things to note in the above snippet:
 - `named` is used to register a dependency with a specific name. This is useful when you have multiple dependencies of the same type.
 - `get` is used to retrieve a dependency from the container. This is useful when you need to pass a dependency to another dependency. Note this can throw in testing mode if the dependency is not registered, so a `try` is required.
 
+### Injectable Macro
+
+For simple, non-singleton dependencies you can leverage the `@Injectable` macro to automatically create a factory for you.
+
+```swift
+class FakeTestModuleForInjecting: DependencyModule {
+    override func defineDependencies() {
+        factory(name: "Important") { 1 }
+    }
+}
+
+// ...
+
+@Injectable
+struct InjectableWithNamedDependency: Equatable {
+    @InjectableName(name: "Important")
+    let anImportantNumber: Int
+}
+
+let dependency: InjectableWithNamedDependency = container.inject()
+```
+
+In the above example, we do not need to define a factory for `InjectableWithNamedDependency`. Since this is annotated with the Injectable macro WhoopDI will automatically create it and provide it's dependencies when it is requested via an `inject` or `get` method.
+
+If you need to provide a named dependency, you can use the `@InjectableName` annotation to specify the name of the dependency you want to inject.
+
+
 ## Register Dependencies
 
 To register modules with WhoopDI, you can use the `registerModules` method of WhoopDI. This method takes a list of modules to register:
