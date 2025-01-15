@@ -9,28 +9,28 @@ class ContainerTests: @unchecked Sendable {
         let options = MockOptionProvider(options: [.threadSafeLocalInject: true])
         container = Container(options: options)
     }
-
+    
     @Test
     func inject() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", "param")
         #expect(dependency is DependencyC)
     }
-
+    
     @Test
     func inject_generic_integer() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<Int> = container.inject()
         #expect(42 == dependency.value)
     }
-
+    
     @Test
     func inject_generic_string() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: GenericDependency<String> = container.inject()
         #expect("string" == dependency.value)
     }
-
+    
     @Test
     func inject_localDefinition() {
         container.registerModules(modules: [GoodTestModule()])
@@ -41,7 +41,7 @@ class ContainerTests: @unchecked Sendable {
         }
         #expect(dependency is DependencyA)
     }
-
+    
     @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/23"))
     func inject_localDefinition_dependenciesWithinLocalModule() {
         container.registerModules(modules: [BadTestModule()])
@@ -55,7 +55,7 @@ class ContainerTests: @unchecked Sendable {
         }
         #expect(dependency is DependencyC)
     }
-
+    
     @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/13"))
     func inject_localDefinition_concurrency() async {
         container.registerModules(modules: [GoodTestModule()])
@@ -66,24 +66,24 @@ class ContainerTests: @unchecked Sendable {
                     module.factory(name: "C_Factory") { DependencyA() as Dependency }
                 }
             }
-
+            
             let taskB = Task.detached {
                 let _: DependencyA = self.container.inject()
             }
-
+            
             for task in [taskA, taskB] {
                 let _ = await task.result
             }
         }
     }
-
+    
     @Test
     func inject_localDefinition_noOverride() {
         container.registerModules(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", params: "params") { _ in }
         #expect(dependency is DependencyC)
     }
-
+    
     @Test
     func inject_localDefinition_withParams() {
         container.registerModules(modules: [GoodTestModule()])
@@ -99,11 +99,14 @@ class ContainerTests: @unchecked Sendable {
         let testInjecting: InjectableWithDependency = container.inject()
         #expect(testInjecting == InjectableWithDependency(dependency: DependencyA()))
     }
-
+    
     @Test
     func injectableWithNamedDependency() throws {
         container.registerModules(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithNamedDependency = container.inject()
-        #expect(testInjecting == InjectableWithNamedDependency(name: 1))
+        let expected = InjectableWithNamedDependency(name: 1,
+                                                     nameFromVariable: "variable",
+                                                     globalVariableName: "global")
+        #expect(testInjecting == expected)
     }
 }

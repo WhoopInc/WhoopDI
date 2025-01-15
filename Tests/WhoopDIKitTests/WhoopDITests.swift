@@ -78,7 +78,10 @@ class WhoopDITests {
     func injectable() {
         WhoopDI.registerModules(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithNamedDependency = WhoopDI.inject()
-        #expect(testInjecting == InjectableWithNamedDependency(name: 1))
+        let expected = InjectableWithNamedDependency(name: 1,
+                                                     nameFromVariable: "variable",
+                                                     globalVariableName:  "global")
+        #expect(testInjecting == expected)
         WhoopDI.removeAllDependencies()
     }
     

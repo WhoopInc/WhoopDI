@@ -7,7 +7,7 @@ struct VariableDeclaration {
     let name: String
     let type: TypeSyntax
     let defaultExpression: ExprSyntax?
-    let injectedName: String?
+    let injectedName: ExprSyntax?
 }
 
 extension DeclGroupSyntax {
@@ -31,7 +31,10 @@ extension DeclGroupSyntax {
             ///  Becomes
             ///  init(..., myValue: Int = 100)
             let equalityExpression = declSyntax.bindings.first?.initializer?.value
-            return VariableDeclaration(name: propertyName, type: typeName, defaultExpression: equalityExpression, injectedName: injectedName)
+            return VariableDeclaration(name: propertyName,
+                                       type: typeName,
+                                       defaultExpression: equalityExpression,
+                                       injectedName: injectedName)
         }
     }
 
@@ -53,14 +56,14 @@ extension DeclGroupSyntax {
         }
     }
 
-    private func injectableName(variableSyntax: VariableDeclSyntax) -> String? {
-        variableSyntax.attributes.compactMap { (attribute) -> String? in
+    private func injectableName(variableSyntax: VariableDeclSyntax) -> ExprSyntax? {
+        variableSyntax.attributes.compactMap { attribute -> ExprSyntax? in
             switch attribute {
             case .attribute(let syntax):
                 // Check for `InjectableName` and then get the name from it
                 guard let name = syntax.attributeName.as(IdentifierTypeSyntax.self)?.name.text,
                         name == "InjectableName" else { return nil }
-                return syntax.arguments?.labeledContent
+                return syntax.arguments?.injectableNameExpression
             default: return nil
             }
         }.first
