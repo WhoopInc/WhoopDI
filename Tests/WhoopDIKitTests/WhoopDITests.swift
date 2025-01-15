@@ -109,7 +109,9 @@ class WhoopDITests {
         var failed = false
         validator.validate { error in
             let expectedKey = ServiceKey(Dependency.self, name: "A_Factory")
-            let expectedError = DependencyError.missingDependency(expectedKey)
+            let expectedError = DependencyError.missingDependency(missingDependency: expectedKey,
+                                                                  similarDependencies: Set(),
+                                                                  dependencyCount: 1)
             #expect(expectedError == error as! DependencyError)
             failed = true
         }

@@ -34,6 +34,10 @@ public final class ServiceDictionary<Value> {
     public func removeAll() {
         valuesByType.removeAll()
     }
+
+    public var count: Int {
+        valuesByType.count
+    }
 }
 
 public extension ServiceDictionary {

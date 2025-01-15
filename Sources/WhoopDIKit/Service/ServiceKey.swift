@@ -1,12 +1,16 @@
 /// Hashable wrapper for a metatype value.
 /// See https://stackoverflow.com/questions/42459484/make-a-swift-dictionary-where-the-key-is-type
-public struct ServiceKey: Sendable {
+public struct ServiceKey: Sendable, CustomStringConvertible {
     public let type: Any.Type
     public let name: String?
     
     public init(_ type: Any.Type, name: String? = nil) {
         self.type = type
         self.name = name
+    }
+
+    public var description: String {
+        "\(type) with name: \(name ?? "<no name>")"
     }
 }
 

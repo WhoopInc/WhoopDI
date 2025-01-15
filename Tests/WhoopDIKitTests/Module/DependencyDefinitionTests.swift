@@ -43,7 +43,8 @@ class DependencyDefinitionTests: XCTestCase {
     }
     
     func test_singleton_get_recoversFromThrow() {
-        let expectedError = DependencyError.missingDependency(ServiceKey(String.self))
+        let expectedError = DependencyError.createMissingDependencyError(missingDependency: ServiceKey(String.self),
+                                                                         serviceDict: ServiceDictionary())
         var callCount = 0
         let definition = SingletonDefinition(name: nil) { _ -> Int in
             callCount += 1
