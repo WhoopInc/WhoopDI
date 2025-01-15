@@ -35,6 +35,24 @@ extension DeclGroupSyntax {
         }
     }
 
+    var allInjectableInits: [InitializerDeclSyntax] {
+        self.memberBlock.members.compactMap { member in
+            if let initSyntax = member.decl.as(InitializerDeclSyntax.self),
+               initSyntax.attributes.contains(where: { element in
+                   switch element {
+                   case .attribute(let syntax):
+                       return syntax.attributeName.as(IdentifierTypeSyntax.self)?.name.text == "InjectableInit"
+                   default:
+                       return false
+                   }
+               }) {
+                return initSyntax
+            } else {
+                return nil
+            }
+        }
+    }
+
     private func injectableName(variableSyntax: VariableDeclSyntax) -> String? {
         variableSyntax.attributes.compactMap { (attribute) -> String? in
             switch attribute {

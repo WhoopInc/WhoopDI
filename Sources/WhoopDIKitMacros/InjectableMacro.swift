@@ -11,6 +11,35 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
             throw MacroExpansionErrorMessage("@Injectable needs to be declared on a concrete type, not a protocol")
         }
 
+        let allInjectableInits = declaration.allInjectableInits
+
+        if allInjectableInits.isEmpty {
+            return try createInitializerAndInject(declaration: declaration)
+        } else if allInjectableInits.count > 1 {
+            throw MacroExpansionErrorMessage("Only one initializer with the `@InjectableInit` macro is allowed")
+        } else {
+            let initValue = allInjectableInits[0]
+            return try createInject(from: initValue, declaration: declaration)
+        }
+    }
+
+    private static func createInject(from initValue: InitializerDeclSyntax, declaration: some DeclGroupSyntax) throws -> [DeclSyntax] {
+        let allArgs = initValue.signature.parameterClause.parameters.map { parameter in
+            "\(parameter.firstName.text == "_" ? "" : "\(parameter.firstName.text): ")container.inject()"
+        }.joined(separator: ", ")
+
+        let accessLevel = self.accessLevel(declaration: declaration) ?? "internal"
+
+        return [
+            """
+            \(raw: accessLevel) static func inject(container: Container) -> Self {
+                Self.init(\(raw: allArgs))
+            }
+            """
+        ]
+    }
+
+    private static func createInitializerAndInject(declaration: some DeclGroupSyntax) throws -> [DeclSyntax] {
         let allVariables = declaration.allMemberVariables
 
         // Create the initializer args in the form `name: type = default`

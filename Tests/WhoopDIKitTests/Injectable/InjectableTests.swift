@@ -41,6 +41,38 @@ final class InjectableTests: XCTestCase {
         macros: ["Injectable": InjectableMacro.self, "InjectableName": InjectableNameMacro.self])
     }
 
+    func testBasicInjectWithInjectableInit() {
+        assertMacroExpansion(
+        """
+        @Injectable struct TestThing {
+           let bestThing: Int
+        
+           @InjectableInit
+           internal init(notReal: Int, _ extraArg: String) {
+               self.bestThing = notReal
+           }
+        }
+        """,
+
+        expandedSource:
+        """
+        struct TestThing {
+           let bestThing: Int
+           internal init(notReal: Int, _ extraArg: String) {
+               self.bestThing = notReal
+           }
+        
+            internal static func inject(container: Container) -> Self {
+                Self.init(notReal: container.inject(), container.inject())
+            }
+        }
+        
+        extension TestThing : Injectable {
+        }
+        """,
+        macros: ["Injectable": InjectableMacro.self, "InjectableName": InjectableNameMacro.self, "InjectableInit": InjectableInitMacro.self])
+    }
+
     func testInjectWithSpecifiers() {
         assertMacroExpansion(
         """
