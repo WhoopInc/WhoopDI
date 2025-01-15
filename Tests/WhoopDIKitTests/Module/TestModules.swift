@@ -82,7 +82,9 @@ struct GenericDependency<T>: Dependency {
 class FakeTestModuleForInjecting: DependencyModule {
     override func defineDependencies() {
         factory { DependencyA() }
-        factory(name: "FakeName", factory: { 1 })
+        factory(name: "FakeName") { 1 }
+        factory(name: "VariableFakeName") { "variable" }
+        factory(name: "GlobalVariableFakeName") { "global" }
     }
 }
 
@@ -91,9 +93,21 @@ struct InjectableWithDependency: Equatable {
     private let dependency: DependencyA
 }
 
+struct InjectableTestNames {
+    static let variableFakeName = "VariableFakeName"
+}
+
+let globalVariableFakeName: String = "GlobalVariableFakeName"
+
 @Injectable
 struct InjectableWithNamedDependency: Equatable {
     @InjectableName(name: "FakeName")
     let name: Int
+
+    @InjectableName(name: InjectableTestNames.variableFakeName)
+    let nameFromVariable: String
+
+    @InjectableName(name: globalVariableFakeName)
+    let globalVariableName: String
 }
 

@@ -11,27 +11,33 @@ final class InjectableTests: XCTestCase {
     func testBasicInject() {
         assertMacroExpansion(
         """
+        let worstName = "worst"
         @Injectable struct TestThing {
            let id: String = "no"
            var newerThing: String { "not again" }
            @InjectableName(name: "Test")
            let bestThing: Int
+           @InjectableName(name: worstName)
+           let worstThing: Int
         }
         """,
                              
         expandedSource:
         """
+        let worstName = "worst"
         struct TestThing {
            let id: String = "no"
            var newerThing: String { "not again" }
            let bestThing: Int
-
+           let worstThing: Int
+        
             internal static func inject(container: Container) -> Self {
-                Self.init(bestThing: container.inject("Test"))
+                Self.init(bestThing: container.inject("Test"), worstThing: container.inject(worstName))
             }
 
-            internal init(bestThing: Int) {
+            internal init(bestThing: Int, worstThing: Int) {
                 self.bestThing = bestThing
+                self.worstThing = worstThing
             }
         }
 

@@ -54,7 +54,7 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
 
         // Creates the whoopdi calls in the `inject` func
         let injectingVariables: String = allVariables.map { variable in
-            "\(variable.name): container.inject(\(variable.injectedName.map { "\"\($0)\"" } ?? "nil"))"
+            "\(variable.name): container.inject(\(variable.injectedName.map { "\($0)" } ?? "nil"))"
         }.joined(separator: ", ")
 
         let accessLevel = self.accessLevel(declaration: declaration) ?? "internal"
@@ -116,18 +116,11 @@ struct InjectableMacro: ExtensionMacro, MemberMacro {
 }
 
 extension AttributeSyntax.Arguments {
-    // Get the first string literal in the argument list to the macro
-    var labeledContent: String? {
+    /// The expression associated with the name argument. `@InjectableName(name: <this>)`
+    var injectableNameExpression: ExprSyntax? {
         switch self {
         case let .argumentList(strList):
-            strList.compactMap { str in
-                str.expression.as(StringLiteralExprSyntax.self)?.segments.compactMap { (segment) -> String? in
-                    return switch segment {
-                    case .stringSegment(let segment): segment.content.text
-                    default: nil
-                    }
-                }.joined()
-            }.first
+            strList.filter { expr in expr.label?.text == "name" }.first?.expression
         default:
             nil
         }
