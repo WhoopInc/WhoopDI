@@ -8,13 +8,13 @@ enum DependencyError: Error, CustomStringConvertible, Equatable {
         case .badParams(let serviceKey):
             return "Bad parameters provided for \(serviceKey)"
         case .missingDependency(let missingDependency, let similarDependencies, let dependencyCount):
-            return missingDeendencyDescription(missingDependency, similarDependencies, dependencyCount)
+            return missingDependencyDescription(missingDependency, similarDependencies, dependencyCount)
         case .nilDependency(let serviceKey):
             return "Nil dependency for \(serviceKey)"
         }
     }
 
-    private func missingDeendencyDescription(_ missingDependency: ServiceKey,
+    private func missingDependencyDescription(_ missingDependency: ServiceKey,
                                              _ similarDependencies: Set<ServiceKey>,
                                              _ dependencyCount: Int) -> String {
         let similarStrings = similarDependencies.map { "- \($0)" }.sorted()
