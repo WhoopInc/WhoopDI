@@ -6,11 +6,11 @@ enum DependencyError: Error, CustomStringConvertible, Equatable {
     var description: String {
         switch self {
         case .badParams(let serviceKey):
-            return "Bad parameters provided for \(serviceKey.type) with name: \(serviceKey.name ?? "<no name>")"
+            return "Bad parameters provided for \(serviceKey)"
         case .missingDependency(let missingDependency, let similarDependencies, let dependencyCount):
             return missingDeendencyDescription(missingDependency, similarDependencies, dependencyCount)
         case .nilDependency(let serviceKey):
-            return "Nil dependency for \(serviceKey.type) with name: \(serviceKey.name ?? "<no name>")"
+            return "Nil dependency for \(serviceKey)"
         }
     }
 
