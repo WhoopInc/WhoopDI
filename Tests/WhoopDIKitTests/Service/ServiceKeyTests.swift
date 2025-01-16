@@ -2,6 +2,16 @@ import XCTest
 @testable import WhoopDIKit
 
 final class ServiceKeyTests: XCTestCase {
+    func test_description() {
+        let key = ServiceKey(String.self, name: "name")
+        XCTAssertEqual("String with name: name", key.description)
+    }
+
+    func test_description_noName() {
+        let key = ServiceKey(String.self)
+        XCTAssertEqual("String with name: <no name>", key.description)
+    }
+
     func test_hash_nilName() {
         let key = ServiceKey(String.self)
         let expected = ObjectIdentifier(String.self).hashValue

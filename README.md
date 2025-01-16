@@ -74,9 +74,9 @@ struct InjectableWithNamedDependency: Equatable {
 let dependency: InjectableWithNamedDependency = container.inject()
 ```
 
-In the above example, we do not need to define a factory for `InjectableWithNamedDependency`. Since this is annotated with the Injectable macro WhoopDI will automatically create it and provide it's dependencies when it is requested via an `inject` or `get` method.
+In the above example, we do not need to define a factory for `InjectableWithNamedDependency`. Since this is decorated with the Injectable macro WhoopDI will automatically create it and provide it's dependencies when it is requested via an `inject` or `get` method.
 
-If you need to provide a named dependency, you can use the `@InjectableName` annotation to specify the name of the dependency you want to inject.
+If you need to provide a named dependency, you can use the `@InjectableName` macro to specify the name of the dependency you want to inject.
 
 
 ## Register Dependencies

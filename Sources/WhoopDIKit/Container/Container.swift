@@ -97,7 +97,8 @@ public final class Container {
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T
         } else  {
-            throw DependencyError.missingDependency(ServiceKey(T.self, name: name))
+            throw DependencyError.createMissingDependencyError(missingDependency: ServiceKey(T.self, name: name),
+                                                               serviceDict: serviceDict)
         }
     }
 

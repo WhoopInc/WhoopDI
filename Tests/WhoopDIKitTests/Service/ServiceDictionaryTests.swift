@@ -40,5 +40,6 @@ final class ServiceDictionaryTests: XCTestCase {
         XCTAssertEqual("string2", dictC[String.self])
         XCTAssertEqual("int2", dictC[Int.self])
         XCTAssertEqual("bool", dictC[Bool.self])
+        XCTAssertEqual(dictC.count, 3)
     }
 }
