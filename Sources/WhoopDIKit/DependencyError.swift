@@ -32,7 +32,7 @@ enum DependencyError: Error, CustomStringConvertible, Equatable {
         serviceDict: ServiceDictionary<DependencyDefinition>
     ) -> DependencyError {
         let similarDependencies = serviceDict.allKeys().filter { key in
-            key.name == missingDependency.name || key.type == missingDependency.type
+            (key.name != nil && key.name == missingDependency.name) || key.type == missingDependency.type
         }
 
         return .missingDependency(missingDependency: missingDependency,

@@ -26,7 +26,23 @@ class DependencyErrorTests: XCTestCase {
         """
         XCTAssertEqual(expected, error.description)
     }
-    
+
+    func test_description_missingDependency_noServiceKeyName_similarDependencies() {
+        let factory = FactoryDefinition(name: nil, factory: { _ in "" })
+        let serviceDict: ServiceDictionary<DependencyDefinition> = ServiceDictionary<DependencyDefinition>()
+        serviceDict[ServiceKey(String.self, name: "other_name")] = factory
+        serviceDict[ServiceKey(Int.self)] = factory
+        let error = DependencyError.createMissingDependencyError(missingDependency: serviceKey,
+                                                                 serviceDict: serviceDict)
+        let expected = """
+        Missing dependency for String with name: <no name>
+        Container has a total of 2 dependencies.
+        Similar dependencies:
+        - String with name: other_name
+        """
+        XCTAssertEqual(expected, error.description)
+    }
+
     func test_description_missingDependency_withServiceKeyName() {
         let error = DependencyError.createMissingDependencyError(missingDependency: serviceKeyWithName,
                                                                  serviceDict: emptyDict)
