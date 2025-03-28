@@ -27,7 +27,7 @@ class DependencyModuleTests {
 
     @Test
     func get_missingContainer_fallsBackOnAppContainer() throws {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         
         let dependencyC: DependencyC = try module.get(params: "params")
         #expect(dependencyC != nil)

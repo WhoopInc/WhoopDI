@@ -5,7 +5,7 @@ import Testing
 class WhoopDITests {
     @Test
     func inject() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", "param")
         #expect(dependency is DependencyC)
         WhoopDI.removeAllDependencies()
@@ -13,7 +13,7 @@ class WhoopDITests {
     
     @Test
     func inject_generic_integer() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: GenericDependency<Int> = WhoopDI.inject()
         #expect(42 == dependency.value)
         WhoopDI.removeAllDependencies()
@@ -21,7 +21,7 @@ class WhoopDITests {
     
     @Test
     func inject_generic_string() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: GenericDependency<String> = WhoopDI.inject()
         #expect("string" == dependency.value)
         WhoopDI.removeAllDependencies()
@@ -29,7 +29,7 @@ class WhoopDITests {
     
     @Test
     func inject_localDefinition() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory") { module in
             // Typically you'd override or provide a transient dependency. I'm using the top level dependency here
             // for the sake of simplicity.
@@ -41,7 +41,7 @@ class WhoopDITests {
     
     @Test
     func inject_localDefinition_multipleInjections() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency1: Dependency = WhoopDI.inject("C_Factory") { module in
             module.factory(name: "C_Factory") { DependencyA() as Dependency }
         }
@@ -58,7 +58,7 @@ class WhoopDITests {
     
     @Test
     func inject_localDefinition_noOverride() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", params: "params") { _ in }
         #expect(dependency is DependencyC)
         WhoopDI.removeAllDependencies()
@@ -66,7 +66,7 @@ class WhoopDITests {
     
     @Test
     func inject_localDefinition_withParams() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let dependency: Dependency = WhoopDI.inject("C_Factory", params: "params") { module in
             module.factoryWithParams(name: "C_Factory") { params in DependencyB(params) as Dependency }
         }
@@ -76,7 +76,7 @@ class WhoopDITests {
     
     @Test
     func injectable() {
-        WhoopDI.registerModules(modules: [FakeTestModuleForInjecting()])
+        WhoopDI.setup(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithNamedDependency = WhoopDI.inject()
         let expected = InjectableWithNamedDependency(name: 1,
                                                      nameFromVariable: "variable",
@@ -88,13 +88,13 @@ class WhoopDITests {
     @Test
     func setup() {
         // Verify nothing explocdes
-        WhoopDI.setup(options: DefaultOptionProvider())
+        WhoopDI.setup(modules: [], options: DefaultOptionProvider())
         WhoopDI.removeAllDependencies()
     }
     
     @Test
     func validation_fails_barParams() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let validator = WhoopDIValidator()
         var failed = false
         validator.validate { error in failed = true }
@@ -104,7 +104,7 @@ class WhoopDITests {
     
     @Test
     func validation_fails_missingDependencies() {
-        WhoopDI.registerModules(modules: [BadTestModule()])
+        WhoopDI.setup(modules: [BadTestModule()])
         let validator = WhoopDIValidator()
         var failed = false
         validator.validate { error in
@@ -122,7 +122,7 @@ class WhoopDITests {
     
     @Test
     func validation_fails_nilFactoryDependency() {
-        WhoopDI.registerModules(modules: [NilFactoryModule()])
+        WhoopDI.setup(modules: [NilFactoryModule()])
         let validator = WhoopDIValidator()
         var failed = false
         validator.validate { error in
@@ -137,7 +137,7 @@ class WhoopDITests {
     
     @Test
     func validation_fails_nilSingletonDependency() {
-        WhoopDI.registerModules(modules: [NilSingletonModule()])
+        WhoopDI.setup(modules: [NilSingletonModule()])
         let validator = WhoopDIValidator()
         var failed = false
         validator.validate { error in
@@ -152,7 +152,7 @@ class WhoopDITests {
     
     @Test
     func validation_succeeds() {
-        WhoopDI.registerModules(modules: [GoodTestModule()])
+        WhoopDI.setup(modules: [GoodTestModule()])
         let validator = WhoopDIValidator()
         validator.addParams("param", forType: Dependency.self, andName: "B_Factory")
         validator.addParams("param", forType: Dependency.self, andName: "B_Single")
