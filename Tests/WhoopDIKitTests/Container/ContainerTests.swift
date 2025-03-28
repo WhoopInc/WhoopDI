@@ -30,7 +30,15 @@ class ContainerTests: @unchecked Sendable {
         let dependency: GenericDependency<String> = container.inject()
         #expect("string" == dependency.value)
     }
-    
+
+    @Test
+    func inject_dependencyTree() {
+        let container = Container()
+        container.registerModules(modules: [ParentTestModule()])
+        let dependency: Dependency = container.inject()
+        #expect(dependency is DependencyC)
+    }
+
     @Test
     func inject_localDefinition() {
         container.registerModules(modules: [GoodTestModule()])

@@ -2,11 +2,11 @@ import Foundation
 
 /// Performs a depth first, post ordered search of the given module's dependency tree and flattens the tree into a list of modules
 /// in which the lowest level modules are ordered first.
-public final class DependencyTree {
+final class DependencyTree {
     
     private let dependencyModule: [DependencyModule]
     
-    public init(dependencyModule: [DependencyModule]) {
+    init(dependencyModule: [DependencyModule]) {
         self.dependencyModule = dependencyModule
         dependencyModule.forEach { module in
             self.traverseTree(for: module)
@@ -32,7 +32,7 @@ public final class DependencyTree {
     }
     
     /// Gets a list of dependent modules for the given module
-    public var modules: [DependencyModule] { 
+    var modules: [DependencyModule] { 
         get {
             return allModules
         }
