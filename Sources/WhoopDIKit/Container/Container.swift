@@ -1,4 +1,5 @@
 import Foundation
+
 public final class Container {
     private let localDependencyGraph: ThreadSafeDependencyGraph
     private var isLocalInjectActive: Bool = false
