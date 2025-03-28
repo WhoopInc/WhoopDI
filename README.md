@@ -28,7 +28,7 @@ targets: [
 
 There are a few simple steps to setup WhoopDI in your project:
 1. Define dependency modules which defined your dependencies.
-2. Register your dependencies with WhoopDI.
+2. Setup WhoopDI with your modules.
 3. Inject your top level dependencies.
 
 ## Dependency Modules
@@ -79,12 +79,18 @@ In the above example, we do not need to define a factory for `InjectableWithName
 If you need to provide a named dependency, you can use the `@InjectableName` macro to specify the name of the dependency you want to inject.
 
 
-## Register Dependencies
+## Setup WhoopDI
 
-To register modules with WhoopDI, you can use the `registerModules` method of WhoopDI. This method takes a list of modules to register:
+To setup WhoopDI with your modules, you can use the `setup` method. This method takes a list of modules to register and should be called once when your application launches:
 
 ```swift
-WhoopDI.registerModules([MyModule()])
+WhoopDI.setup(modules: [MyModule()])
+```
+
+If you need to create a container directly (e.g., for testing), you can use the `Container` initializer:
+
+```swift
+let container = Container(modules: [MyModule()])
 ```
 
 ## Inject Dependencies
@@ -128,7 +134,7 @@ class MyDITests: XCTestCase {
     
 
     func test_allDependenciesProvided() {
-        WhoopDI.registerModules(modules: [MyModule()])
+        WhoopDI.setup(modules: [MyModule()])
         
         let validator = WhoopDIValidator()
         validator.validate { error in
