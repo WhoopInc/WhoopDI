@@ -88,6 +88,23 @@ class FakeTestModuleForInjecting: DependencyModule {
     }
 }
 
+class ChildTestModule: DependencyModule {
+    override func defineDependencies() {
+        factory(name: "a") { DependencyA() as Dependency }
+        factory { DependencyB("") }
+    }
+}
+
+class ParentTestModule: DependencyModule {
+    override var moduleDependencies: [DependencyModule] {
+        [ChildTestModule()]
+    }
+    
+    override func defineDependencies() {
+        factory { DependencyC(proto: try self.get("a"), concrete: try self.get()) as Dependency }
+    }
+}
+
 @Injectable
 struct InjectableWithDependency: Equatable {
     private let dependency: DependencyA
