@@ -5,14 +5,9 @@ public final class WhoopDI: DependencyRegister {
     /// Setup WhoopDI with the supplied options.
     /// This should only be called once when your application launches (and before WhoopDI is used).
     /// By default all options are disabled if you do not call this method.
-    public static func setup(options: WhoopDIOptionProvider) {
-        appContainer = Container(options: options)
-    }
-
-    /// Registers a list of modules with the DI system.
-    /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
-    public static func registerModules(modules: [DependencyModule]) {
-        appContainer.registerModules(modules: modules)
+    public static func setup(modules: [DependencyModule],
+                             options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
+        appContainer = Container(modules: modules, options: options)
     }
     
     /// Injects a dependency into your code.
@@ -63,6 +58,6 @@ public final class WhoopDI: DependencyRegister {
     }
     
     public static func removeAllDependencies() {
-        appContainer.removeAllDependencies()
+        appContainer = Container()
     }
 }

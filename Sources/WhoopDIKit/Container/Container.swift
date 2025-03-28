@@ -7,16 +7,18 @@ public final class Container {
     
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
-    public init(options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
+    /// Creates a container and registers a list of modules with the DI system.
+    /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
+    /// Each provided module and it's dependencies will be registered with the DI system.
+    /// Dependencies are registered in dependency order, with leaf modules (those with no dependencies) being registered first.
+    public init(modules: [DependencyModule] = [],
+                options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
         self.options = options
         localDependencyGraph = ThreadSafeDependencyGraph(options: options)
+        registerModules(modules: modules)
     }
 
-    /// Registers a list of modules with the DI system.
-    /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
-    /// Each provided module and it's dependencies will be registered with the DI system. 
-    /// Dependencies are registered in dependency order, with leaf modules (those with no dependencies) being registered first.
-    public func registerModules(modules: [DependencyModule]) {
+    private func registerModules(modules: [DependencyModule]) {
         let tree = DependencyTree(dependencyModule: modules)
         tree.modules.forEach { module in
             module.container = self
