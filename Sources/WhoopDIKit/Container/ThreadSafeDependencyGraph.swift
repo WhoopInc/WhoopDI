@@ -23,19 +23,19 @@ final class ThreadSafeDependencyGraph: @unchecked Sendable {
         // Special handling for WHPBLEManager to force the deadlock
         let isWHPBLEManagerType = typeName.contains("WHPBLEManager")
         
-        if isWHPBLEManagerType {
-            print("🛑 Thread \(threadID) trying to acquire lock for WHPBLEManager")
+        if isWHPBLEManagerType || true {
+            print("🛑 Thread \(threadID) trying to acquire lock for object")
             
             // Track this thread
             Self.trackingLock.lock()
-            Self.activeThreads[UInt64(threadID)] = "WHPBLEManager"
+           // Self.activeThreads[UInt64(threadID)] = "WHPBLEManager"
             Self.printDeadlockStatus()
             Self.trackingLock.unlock()
             
             // Add delay before locking for WHPBLEManager to increase deadlock chance
             if threadSafe {
                 print("🕒 Adding artificial delay before lock for WHPBLEManager on thread \(threadID)")
-                Thread.sleep(forTimeInterval: 0.05)
+                Thread.sleep(forTimeInterval: 0.15)
             }
         }
         
@@ -49,7 +49,7 @@ final class ThreadSafeDependencyGraph: @unchecked Sendable {
         let result = block(serviceDict)
         
         // If we're dealing with WHPBLEManager, add delay before releasing lock
-        if threadSafe && isWHPBLEManagerType {
+        if threadSafe {
             print("⏳ Thread \(threadID) holding WHPBLEManager lock for 0.1s")
             Thread.sleep(forTimeInterval: 0.1) // Hold the lock longer to increase deadlock chance
         }
