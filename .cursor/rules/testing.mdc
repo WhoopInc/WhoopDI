@@ -12,7 +12,7 @@ alwaysApply: true
 - Tests are annototated with `@Test`.
 - Assertions are done view `#expect(<condition>)`.
 - To correctly import the Swift Testing use `import Testing`.
-- Test method names should be in the form `method_condtion`. You do not need to prefix with test.
+- Test method names should be in the form `method_condition`. You do not need to prefix with test.
 
 Here's an example of a simple swift test:
 
