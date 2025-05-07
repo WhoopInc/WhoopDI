@@ -88,6 +88,46 @@ class ContainerTests {
         #expect(testInjecting == expected)
     }
 
+    @Test
+    func createChild_withModules() {
+        let parentContainer = createContainer(modules: [GoodTestModule()])
+        let childContainer = parentContainer.createChild([GoodTestModule()])
+        
+        // Verify child inherits parent dependencies
+        let parentDependency: Dependency = parentContainer.inject("C_Factory", "param")
+        let childDependency: Dependency = childContainer.inject("C_Factory", "param")
+        #expect(parentDependency is DependencyC)
+        #expect(childDependency is DependencyC)
+        
+        // Verify child can override parent dependencies
+        let childContainer2 = parentContainer.createChild { module in
+            module.factory(name: "C_Factory") { DependencyA() as Dependency }
+        }
+        let overriddenDependency: Dependency = childContainer2.inject("C_Factory")
+        #expect(overriddenDependency is DependencyA)
+    }
+    
+    @Test
+    func createChild_withLocalDefinition() {
+        let parentContainer = createContainer(modules: [GoodTestModule()])
+        let childContainer = parentContainer.createChild { module in
+            module.factory(name: "C_Factory") { DependencyA() as Dependency }
+            module.factory { GenericDependency("custom") }
+        }
+        
+        // Verify child can override parent dependencies
+        let overriddenDependency: Dependency = childContainer.inject("C_Factory")
+        #expect(overriddenDependency is DependencyA)
+        
+        // Verify child can add new dependencies
+        let newDependency: GenericDependency<String> = childContainer.inject()
+        #expect(newDependency.value == "custom")
+        
+        // Verify child still has access to non-overridden parent dependencies
+        let inheritedDependency: GenericDependency<Int> = childContainer.inject()
+        #expect(inheritedDependency.value == 42)
+    }
+
     private func createContainer(modules: [DependencyModule]) -> Container {
         let options = MockOptionProvider(options: [.threadSafeLocalInject: true])
         return .init(modules: modules, options: options)
