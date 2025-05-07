@@ -1,0 +1,47 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Overview
+- Use Swift testing whenever possible. Do not use XCTest
+- Run tests using the test commands defined in "Running Tests"
+
+# Swift Testing
+- We should prefer to use a struct for the test class unless we need to mutate a variable for some reason.
+- Tests are annototated with `@Test`.
+- Assertions are done view `#expect(<condition>)`.
+- To correctly import the Swift Testing use `import Testing`.
+- Test method names should be in the form `method_condtion`. You do not need to prefix with test.
+
+Here's an example of a simple swift test:
+
+```
+@Test
+func videoCommenting() async throws {
+    let video = try #require(await videoLibrary.video(named: "A Beach"))
+    #expect(video.comments.contains("So picturesque!"))
+}
+```
+
+# Running Tests
+
+To run all tests:
+```bash
+swift test
+```
+
+To run a specific test:
+```bash
+swift test --filter "testName"
+```
+
+For example, to run only the `inject` test:
+```bash
+swift test --filter "inject"
+```
+
+You can also use partial matches:
+```bash
+swift test --filter "inject*"  # Runs all tests starting with "inject"
+``` 

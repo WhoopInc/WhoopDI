@@ -125,10 +125,6 @@ public final class Container {
             return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
         }
     }
-
-    public func removeAllDependencies() {
-        serviceDict.removeAll()
-    }
 }
 
 
