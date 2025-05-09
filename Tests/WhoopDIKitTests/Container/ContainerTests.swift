@@ -91,20 +91,13 @@ class ContainerTests {
     @Test
     func createChild_withModules() {
         let parentContainer = createContainer(modules: [GoodTestModule()])
-        let childContainer = parentContainer.createChild([GoodTestModule()])
-        
-        // Verify child inherits parent dependencies
-        let parentDependency: Dependency = parentContainer.inject("C_Factory", "param")
-        let childDependency: Dependency = childContainer.inject("C_Factory", "param")
-        #expect(parentDependency is DependencyC)
-        #expect(childDependency is DependencyC)
-        
-        // Verify child can override parent dependencies
-        let childContainer2 = parentContainer.createChild { module in
-            module.factory(name: "C_Factory") { DependencyA() as Dependency }
-        }
-        let overriddenDependency: Dependency = childContainer2.inject("C_Factory")
-        #expect(overriddenDependency is DependencyA)
+        let childContainer = parentContainer.createChild([OverrideModule()])
+
+        let overiddenDependency: Dependency = childContainer.inject("C_Factory")
+        let _: DependencyD = childContainer.inject() // Make sure this doesn't explode
+        let dependencyFromChild: Int = childContainer.inject("integer")
+        #expect(dependencyFromChild == 1)
+        #expect(overiddenDependency is DependencyA)
     }
     
     @Test

@@ -26,6 +26,16 @@ class GoodTestModule: DependencyModule {
     }
 }
 
+class OverrideModule: DependencyModule {
+    override func defineDependencies() {
+        factory(name: "C_Factory") {
+            DependencyA() as Dependency
+        }
+
+        factory(name: "integer") { 1 }
+    }
+}
+
 class BadTestModule: DependencyModule {
     override func defineDependencies() {
         factoryWithParams { params in
