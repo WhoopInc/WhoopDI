@@ -1,10 +1,9 @@
 import Foundation
 
 public final class Container {
-    private let localDependencyGraph: ThreadSafeDependencyGraph
-    private var isLocalInjectActive: Bool = false
     private let options: WhoopDIOptionProvider
-    
+    private let parent: Container?
+
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
     /// Creates a container and registers a list of modules with the DI system.
@@ -12,10 +11,37 @@ public final class Container {
     /// Each provided module and it's dependencies will be registered with the DI system.
     /// Dependencies are registered in dependency order, with leaf modules (those with no dependencies) being registered first.
     public init(modules: [DependencyModule] = [],
+                parent: Container? = nil,
                 options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
+        self.parent = parent
         self.options = options
-        localDependencyGraph = ThreadSafeDependencyGraph(options: options)
         registerModules(modules: modules)
+    }
+
+    /// Creates a container with a local module definition closure.
+    /// This initializer allows you to define dependencies inline without creating a separate module.
+    /// The dependencies defined in the closure will be registered with the DI system.
+    ///
+    /// Example:
+    /// ```swift
+    /// let container = Container { module in
+    ///     module.factory { MyService() }
+    ///     module.singleton { SharedService() }
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - parent: An optional parent container to inherit dependencies from
+    ///   - options: Configuration options for the DI system
+    ///   - localDefinition: A closure that defines the dependencies for this container
+    public init(parent: Container? = nil,
+                options: WhoopDIOptionProvider = defaultWhoopDIOptions(),
+                _ localDefinition: (DependencyModule) -> Void) {
+        self.parent = parent
+        self.options = options
+        let localModule = DependencyModule()
+        localDefinition(localModule)
+        registerModules(modules: [localModule])
     }
 
     private func registerModules(modules: [DependencyModule]) {
@@ -66,31 +92,8 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
-        return localDependencyGraph.acquireDependencyGraph { localServiceDict in
-            // Nested local injects are not currently supported. Fail fast here.
-            guard !isLocalInjectActive else {
-                fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
-            }
-            
-            isLocalInjectActive = true
-            defer {
-                isLocalInjectActive = false
-                localDependencyGraph.resetDependencyGraph()
-            }
-            
-            let localModule = DependencyModule()
-            localModule.container = self
-            localDefinition(localModule)
-            localModule.addToServiceDictionary(serviceDict: localServiceDict)
-            
-            do {
-                return try get(name, params)
-            } catch {
-                print("Inject failed with stack trace:")
-                Thread.callStackSymbols.forEach { print($0) }
-                fatalError("WhoopDI inject failed with error: \(error)")
-            }
-        }
+        let localContainer = createChild(localDefinition)
+        return localContainer.inject(name, params)
     }
 
     /// Used internally by the DependencyModule get to loop up a sub-dependency in the object graph.
@@ -99,6 +102,8 @@ public final class Container {
         let serviceKey = ServiceKey(T.self, name: name)
         let definition = getDefinition(serviceKey)
         if let value = try definition?.get(params: params) as? T {
+            return value
+        } else if let value = try parent?.getDefinition(serviceKey)?.get(params: params) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T
@@ -121,9 +126,40 @@ public final class Container {
     }
 
     private func getDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
-        localDependencyGraph.acquireDependencyGraph { localServiceDict in
-            return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
-        }
+        serviceDict[serviceKey]
+    }
+
+    /// Creates a child container that inherits all dependencies from this container.
+    /// Child containers can override parent dependencies and add new ones.
+    /// This is useful for creating isolated dependency scopes or for testing.
+    ///
+    /// Example:
+    /// ```swift
+    /// let childContainer = container.createChild([MyModule(), OtherModule()])
+    /// ```
+    ///
+    /// - Parameter modules: An array of dependency modules to register with the child container
+    /// - Returns: A new container instance that inherits from this container
+    public func createChild(_ modules: [DependencyModule] = []) -> Self {
+        .init(modules: modules, parent: self, options: options)
+    }
+
+    /// Creates a child container that inherits all dependencies from this container.
+    /// Child containers can override parent dependencies and add new ones.
+    /// This is useful for creating isolated dependency scopes or for testing.
+    ///
+    /// Example:
+    /// ```swift
+    /// let childContainer = container.createChild { module in
+    ///     module.factory { MockService() } // Override a parent dependency
+    ///     module.factory { NewService() }  // Add a new dependency
+    /// }
+    /// ```
+    ///
+    /// - Parameter localDefinition: A closure that defines additional or overriding dependencies
+    /// - Returns: A new container instance that inherits from this container
+    public func createChild(_ localDefinition: (DependencyModule) -> Void) -> Self {
+        .init(parent: self, options: options, localDefinition)
     }
 }
 
