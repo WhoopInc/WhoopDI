@@ -6,6 +6,10 @@ public final class Container {
 
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
+    // Legacy local inject
+    private let localDependencyGraph: ThreadSafeDependencyGraph
+    private var isLocalInjectActive: Bool = false
+
     /// Creates a container and registers a list of modules with the DI system.
     /// Typically you will create a `DependencyModule` for your feature, then add it to the module list provided to this method.
     /// Each provided module and it's dependencies will be registered with the DI system.
@@ -15,6 +19,7 @@ public final class Container {
                 options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
         self.parent = parent
         self.options = options
+        localDependencyGraph = ThreadSafeDependencyGraph(options: options)
         registerModules(modules: modules)
     }
 
@@ -39,6 +44,7 @@ public final class Container {
                 _ localDefinition: (DependencyModule) -> Void) {
         self.parent = parent
         self.options = options
+        localDependencyGraph = ThreadSafeDependencyGraph(options: options)
         let localModule = DependencyModule()
         localDefinition(localModule)
         registerModules(modules: [localModule])
@@ -92,8 +98,42 @@ public final class Container {
     public func inject<T>(_ name: String? = nil,
                           params: Any? = nil,
                           _ localDefinition: (DependencyModule) -> Void) -> T {
+        guard options.isOptionEnabled(.localInjectWithoutMutation) else {
+            return legacyLocalInject(name, params: params, localDefinition)
+        }
+
         let localContainer = createChild(localDefinition)
         return localContainer.inject(name, params)
+    }
+
+    private func legacyLocalInject<T>(_ name: String? = nil,
+                                      params: Any? = nil,
+                                      _ localDefinition: (DependencyModule) -> Void) -> T {
+        return localDependencyGraph.acquireDependencyGraph { localServiceDict in
+            // Nested local injects are not currently supported. Fail fast here.
+            guard !isLocalInjectActive else {
+                fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
+            }
+
+            isLocalInjectActive = true
+            defer {
+                isLocalInjectActive = false
+                localDependencyGraph.resetDependencyGraph()
+            }
+
+            let localModule = DependencyModule()
+            localModule.container = self
+            localDefinition(localModule)
+            localModule.addToServiceDictionary(serviceDict: localServiceDict)
+
+            do {
+                return try get(name, params)
+            } catch {
+                print("Inject failed with stack trace:")
+                Thread.callStackSymbols.forEach { print($0) }
+                fatalError("WhoopDI inject failed with error: \(error)")
+            }
+        }
     }
 
     /// Used internally by the DependencyModule get to loop up a sub-dependency in the object graph.
@@ -126,7 +166,17 @@ public final class Container {
     }
 
     private func getDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
-        serviceDict[serviceKey]
+        guard options.isOptionEnabled(.localInjectWithoutMutation) else {
+            return legacyGetDefinition(serviceKey)
+        }
+
+        return serviceDict[serviceKey]
+    }
+
+    private func legacyGetDefinition(_ serviceKey: ServiceKey) -> DependencyDefinition? {
+        localDependencyGraph.acquireDependencyGraph { localServiceDict in
+            return localServiceDict[serviceKey] ?? serviceDict[serviceKey]
+        }
     }
 
     /// Creates a child container that inherits all dependencies from this container.
