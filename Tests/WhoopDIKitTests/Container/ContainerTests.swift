@@ -8,14 +8,14 @@ class ContainerTests {
         let dependency: Dependency = container.inject("C_Factory", "param")
         #expect(dependency is DependencyC)
     }
-    
+
     @Test
     func inject_generic_integer() {
         let container = createContainer(modules: [GoodTestModule()])
         let dependency: GenericDependency<Int> = container.inject()
         #expect(42 == dependency.value)
     }
-    
+
     @Test
     func inject_generic_string() {
         let container = createContainer(modules: [GoodTestModule()])
@@ -40,7 +40,18 @@ class ContainerTests {
         }
         #expect(dependency is DependencyA)
     }
-    
+
+    @Test
+    func inject_localDefinition_legacyInject() {
+        let container = createContainer(modules: [GoodTestModule()], localInjectWithoutMutation: false)
+        let dependency: Dependency = container.inject("C_Factory") { module in
+            // Typically you'd override or provide a transient dependency. I'm using the top level dependency here
+            // for the sake of simplicity.
+            module.factory(name: "C_Factory") { DependencyA() as Dependency }
+        }
+        #expect(dependency is DependencyA)
+    }
+
     @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/23"))
     func inject_localDefinition_dependenciesWithinLocalModule() {
         let container = createContainer(modules: [BadTestModule()])
@@ -54,14 +65,14 @@ class ContainerTests {
         }
         #expect(dependency is DependencyC)
     }
-    
+
     @Test
     func inject_localDefinition_noOverride() {
         let container = createContainer(modules: [GoodTestModule()])
         let dependency: Dependency = container.inject("C_Factory", params: "params") { _ in }
         #expect(dependency is DependencyC)
     }
-    
+
     @Test
     func inject_localDefinition_withParams() {
         let container = createContainer(modules: [GoodTestModule()])
@@ -70,14 +81,14 @@ class ContainerTests {
         }
         #expect(dependency is DependencyB)
     }
-    
+
     @Test
     func injectableWithDependency() throws {
         let container = createContainer(modules: [FakeTestModuleForInjecting()])
         let testInjecting: InjectableWithDependency = container.inject()
         #expect(testInjecting == InjectableWithDependency(dependency: DependencyA()))
     }
-    
+
     @Test
     func injectableWithNamedDependency() throws {
         let container = createContainer(modules: [FakeTestModuleForInjecting()])
@@ -99,7 +110,7 @@ class ContainerTests {
         #expect(dependencyFromChild == 1)
         #expect(overiddenDependency is DependencyA)
     }
-    
+
     @Test
     func createChild_withLocalDefinition() {
         let parentContainer = createContainer(modules: [GoodTestModule()])
@@ -107,22 +118,26 @@ class ContainerTests {
             module.factory(name: "C_Factory") { DependencyA() as Dependency }
             module.factory { GenericDependency("custom") }
         }
-        
+
         // Verify child can override parent dependencies
         let overriddenDependency: Dependency = childContainer.inject("C_Factory")
         #expect(overriddenDependency is DependencyA)
-        
+
         // Verify child can add new dependencies
         let newDependency: GenericDependency<String> = childContainer.inject()
         #expect(newDependency.value == "custom")
-        
+
         // Verify child still has access to non-overridden parent dependencies
         let inheritedDependency: GenericDependency<Int> = childContainer.inject()
         #expect(inheritedDependency.value == 42)
     }
 
-    private func createContainer(modules: [DependencyModule]) -> Container {
-        let options = MockOptionProvider(options: [.threadSafeLocalInject: true])
+    private func createContainer(modules: [DependencyModule],
+                                 localInjectWithoutMutation: Bool = true) -> Container {
+        let options = MockOptionProvider(options: [
+            .threadSafeLocalInject: true,
+            .localInjectWithoutMutation: localInjectWithoutMutation
+        ])
         return .init(modules: modules, options: options)
     }
 }
