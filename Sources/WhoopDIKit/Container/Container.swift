@@ -6,7 +6,10 @@ public final class Container {
 
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
-    // Legacy local inject
+    // For Legacy local inject.
+    // When localInjectWithoutMutation is disabled these properties are used to lock the local service dictionary
+    // so it can be used across multiple static calls to WhoopDI.inject. When that option is enabled we will no longer
+    // support statically interacting with the local service dictionary.
     private let localDependencyGraph: ThreadSafeDependencyGraph
     private var isLocalInjectActive: Bool = false
 
