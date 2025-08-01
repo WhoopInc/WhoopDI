@@ -132,6 +132,25 @@ class ContainerTests {
         #expect(inheritedDependency.value == 42)
     }
 
+    @Test(.bug("https://github.com/WhoopInc/WhoopDI/issues/44"))
+    func createChild_crossContainerDependencies_shouldResolveSuccessfully() {
+        // This test reproduces the bug where dependencies span across container boundaries:
+        // Parent: DependencyG depends on Child's DependencyH
+        // Child: DependencyH available, DependencyI depends on Parent's DependencyG
+        
+        let parentContainer = createContainer(modules: [CrossContainerParentModule()])
+        let childContainer = parentContainer.createChild([CrossContainerChildModule()])
+        
+        // Child should be able to inject its own dependency
+        let _: DependencyH = childContainer.inject()
+        
+        // Child should be able to inject parent dependency that requires child dependency
+        let _: DependencyG = childContainer.inject()
+        
+        // Child should be able to inject its dependency that requires parent dependency
+        let _: DependencyI = childContainer.inject()
+    }
+
     private func createContainer(modules: [DependencyModule],
                                  localInjectWithoutMutation: Bool = true) -> Container {
         let options = MockOptionProvider(options: [

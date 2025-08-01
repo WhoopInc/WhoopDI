@@ -56,7 +56,6 @@ public final class Container {
     private func registerModules(modules: [DependencyModule]) {
         let tree = DependencyTree(dependencyModule: modules)
         tree.modules.forEach { module in
-            module.container = self
             module.defineDependencies()
             module.addToServiceDictionary(serviceDict: serviceDict)
         }
@@ -67,12 +66,14 @@ public final class Container {
     /// The injected dependency will have all of it's sub-dependencies provided by the object graph defined in WhoopDI.
     /// Typically this should be called from your top level UI object (ViewController, etc). Intermediate components should rely upon constructor injection (i.e providing dependencies via the constructor)
     public func inject<T>(_ name: String? = nil, _ params: Any? = nil) -> T {
-        do {
-            return try get(name, params)
-        } catch {
-            print("Inject failed with stack trace:")
-            Thread.callStackSymbols.forEach { print($0) }
-            fatalError("WhoopDI inject failed with error: \(error)")
+        return ContainerContext.withContainer(self) {
+            do {
+                return try get(name, params)
+            } catch {
+                print("Inject failed with stack trace:")
+                Thread.callStackSymbols.forEach { print($0) }
+                fatalError("WhoopDI inject failed with error: \(error)")
+            }
         }
     }
 
@@ -112,29 +113,30 @@ public final class Container {
     private func legacyLocalInject<T>(_ name: String? = nil,
                                       params: Any? = nil,
                                       _ localDefinition: (DependencyModule) -> Void) -> T {
-        return localDependencyGraph.acquireDependencyGraph { localServiceDict in
-            // Nested local injects are not currently supported. Fail fast here.
-            guard !isLocalInjectActive else {
-                fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
-            }
+        return ContainerContext.withContainer(self) {
+            return localDependencyGraph.acquireDependencyGraph { localServiceDict in
+                // Nested local injects are not currently supported. Fail fast here.
+                guard !isLocalInjectActive else {
+                    fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
+                }
 
-            isLocalInjectActive = true
-            defer {
-                isLocalInjectActive = false
-                localDependencyGraph.resetDependencyGraph()
-            }
+                isLocalInjectActive = true
+                defer {
+                    isLocalInjectActive = false
+                    localDependencyGraph.resetDependencyGraph()
+                }
 
-            let localModule = DependencyModule()
-            localModule.container = self
-            localDefinition(localModule)
-            localModule.addToServiceDictionary(serviceDict: localServiceDict)
+                let localModule = DependencyModule()
+                localDefinition(localModule)
+                localModule.addToServiceDictionary(serviceDict: localServiceDict)
 
-            do {
-                return try get(name, params)
-            } catch {
-                print("Inject failed with stack trace:")
-                Thread.callStackSymbols.forEach { print($0) }
-                fatalError("WhoopDI inject failed with error: \(error)")
+                do {
+                    return try get(name, params)
+                } catch {
+                    print("Inject failed with stack trace:")
+                    Thread.callStackSymbols.forEach { print($0) }
+                    fatalError("WhoopDI inject failed with error: \(error)")
+                }
             }
         }
     }
@@ -158,12 +160,14 @@ public final class Container {
 
     /// Used internally via the `WhoopDIValidator` to verify all definitions in the object graph have definitions for their sub-dependencies  (i.e this verifies the object graph is complete).
     func validate(paramsDict: ServiceDictionary<Any>, onFailure: (Error) -> Void) {
-        serviceDict.allKeys().forEach { serviceKey in
-            let definition = getDefinition(serviceKey)
-            do {
-                let _ = try definition?.get(params: paramsDict[serviceKey])
-            } catch {
-                onFailure(error)
+        ContainerContext.withContainer(self) {
+            serviceDict.allKeys().forEach { serviceKey in
+                let definition = getDefinition(serviceKey)
+                do {
+                    let _ = try definition?.get(params: paramsDict[serviceKey])
+                } catch {
+                    onFailure(error)
+                }
             }
         }
     }

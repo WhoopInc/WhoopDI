@@ -138,3 +138,42 @@ struct InjectableWithNamedDependency: Equatable {
     let globalVariableName: String
 }
 
+// MARK: - Bug #44 Test Dependencies
+
+class DependencyG: Dependency {
+    private let dependencyH: DependencyH
+    
+    init(dependencyH: DependencyH) {
+        self.dependencyH = dependencyH
+    }
+}
+
+class DependencyH: Dependency { }
+
+class DependencyI: Dependency {
+    private let dependencyG: DependencyG
+    
+    init(dependencyG: DependencyG) {
+        self.dependencyG = dependencyG
+    }
+}
+
+// MARK: - Bug #44 Test Modules
+
+class CrossContainerParentModule: DependencyModule {
+    override func defineDependencies() {
+        // Parent dependency that requires child dependency H
+        factory { DependencyG(dependencyH: try self.get()) }
+    }
+}
+
+class CrossContainerChildModule: DependencyModule {
+    override func defineDependencies() {
+        // Child provides dependency H (required by parent)
+        factory { DependencyH() }
+        
+        // Child dependency I that requires parent dependency G
+        factory { DependencyI(dependencyG: try self.get()) }
+    }
+}
+
