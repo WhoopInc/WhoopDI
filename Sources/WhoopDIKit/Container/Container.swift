@@ -4,7 +4,7 @@ public final class Container {
     private let options: WhoopDIOptionProvider
     internal let parent: Container?
 
-    private let serviceDict = ServiceDictionary<DependencyDefinition>()
+    internal let serviceDict = ServiceDictionary<DependencyDefinition>()
 
     // For Legacy local inject.
     // When localInjectWithoutMutation is disabled these properties are used to lock the local service dictionary
@@ -57,7 +57,7 @@ public final class Container {
         let tree = DependencyTree(dependencyModule: modules)
         tree.modules.forEach { module in
             module.defineDependencies()
-            module.addToServiceDictionary(serviceDict: serviceDict)
+            module.addToContainer(container: self)
         }
     }
 
@@ -128,7 +128,7 @@ public final class Container {
 
                 let localModule = DependencyModule()
                 localDefinition(localModule)
-                localModule.addToServiceDictionary(serviceDict: localServiceDict)
+                localModule.addToContainer(container: self)
 
                 do {
                     return try get(name, params)

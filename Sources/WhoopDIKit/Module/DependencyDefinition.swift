@@ -1,7 +1,16 @@
 import Foundation
+
 protocol DependencyDefinition {
     var serviceKey: ServiceKey { get }
     func get(params: Any?, container: Container) throws -> Any
+
+    func insert(into container: Container)
+}
+
+extension DependencyDefinition {
+    func insert(into container: Container) {
+        container.serviceDict[self.serviceKey] = self
+    }
 }
 
 fileprivate extension DependencyDefinition {
