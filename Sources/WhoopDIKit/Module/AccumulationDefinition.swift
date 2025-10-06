@@ -5,8 +5,12 @@ private func wrapAccumulationProvider<Key: AccumulationKey>(accumulationKey: Key
         // Accumulate from the parent value if it exists, then add the current one
         let previousValueFromContainer: Key.FinalValue?
         do {
-            previousValueFromContainer = try container.parent?.get(nil, params)
-        } catch DependencyError.missingDependency(missingDependency: _, similarDependencies: _, dependencyCount: _) {
+            if let parent = container.parent {
+                previousValueFromContainer = try parent.get(nil, params)
+            } else {
+                previousValueFromContainer = nil
+            }
+        } catch DependencyError.missingDependency {
             previousValueFromContainer = nil // If there is no dependency, make it nil. Fail on other errors
         }
         return accumulationKey.accumulate(current: previousValueFromContainer ?? accumulationKey.defaultValue,

@@ -148,7 +148,7 @@ public final class Container {
         let definition = getDefinition(serviceKey)
         if let value = try definition?.get(params: params, container: self) as? T {
             return value
-        } else if let value = try parent?.getDefinition(serviceKey)?.get(params: params, container: self) as? T {
+        } else if let parent = parent, let value = try parent.getDefinition(serviceKey)?.get(params: params, container: parent) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T
