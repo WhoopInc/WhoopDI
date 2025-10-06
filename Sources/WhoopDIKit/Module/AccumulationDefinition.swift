@@ -6,7 +6,8 @@ private func wrapAccumulationProvider<Key: AccumulationKey>(accumulationKey: Key
         let previousValueFromContainer: Key.FinalValue?
         do {
             if let parent = container.parent {
-                previousValueFromContainer = try parent.get(nil, params)
+                let value: Key.FinalValue = try parent.get(nil, params)
+                previousValueFromContainer = value
             } else {
                 previousValueFromContainer = nil
             }
@@ -26,6 +27,7 @@ final class FactoryAccumulationDefinition: DependencyDefinition {
     let serviceKey: ServiceKey
 
     init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
+        print("FACTORY INIT: Creating FactoryAccumulationDefinition for \(Key.self)")
         self.serviceKey = ServiceKey(Key.FinalValue.self)
         self.valueProvider = wrapAccumulationProvider(accumulationKey: accumulationKey, valueProvider: valueProvider)
     }
