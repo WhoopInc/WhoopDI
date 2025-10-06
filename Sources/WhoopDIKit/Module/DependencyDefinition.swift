@@ -1,7 +1,7 @@
 import Foundation
 protocol DependencyDefinition {
     var serviceKey: ServiceKey { get }
-    func get(params: Any?) throws -> Any
+    func get(params: Any?, container: Container) throws -> Any
 }
 
 fileprivate extension DependencyDefinition {
@@ -24,7 +24,7 @@ final class FactoryDefinition: DependencyDefinition {
         self.factory = factory
     }
     
-    func get(params: Any?) throws -> Any {
+    func get(params: Any?, container: Container) throws -> Any {
         try verifyNotNil(value: factory(params))
     }
 }
@@ -42,7 +42,7 @@ final class SingletonDefinition: DependencyDefinition {
     }
     
     /// We need to use a locking mechanism in this version of get because we only want the singleton instance to get initialized exactly once.
-    func get(params: Any?) throws -> Any {
+    func get(params: Any?, container: Container) throws -> Any {
         // Double checked locking - check first if we already have a value.
         if let value = singletonValue {
             return value
