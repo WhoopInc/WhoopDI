@@ -19,21 +19,43 @@ private func wrapAccumulationProvider<Key: AccumulationKey>(accumulationKey: Key
     }
 }
 
+private func accumulate<Key: AccumulationKey>(key: Key.Type, definition: DependencyDefinition, serviceDictionary: ServiceDictionary<DependencyDefinition>) {
+    if let value = serviceDictionary[definition.serviceKey] {
+        serviceDictionary[definition.serviceKey] = FactoryDefinition(name: nil, factory: { params, container in
+            guard let currentValue = try value.get(params: params, container: container) as? Key.FinalValue,
+                  let next = try definition.get(params: params, container: container) as? Key.AccumulatedValue else {
+                fatalError() // This basically shouldn't be possible since we have two things with the same service key, but totally different value types
+            }
+            return key.accumulate(current: currentValue, next: next)
+        })
+    } else {
+        serviceDictionary[definition.serviceKey] = definition
+    }
+}
+
 
 /// Provides the definition of an accumulation that is recalculated on each request.
 /// A fresh accumulation will be computed each time it is requested.
 final class FactoryAccumulationDefinition: DependencyDefinition {
     private let valueProvider: (Any?, Container) throws -> Any
+    private let insertionFunc: (ServiceDictionary<DependencyDefinition>, DependencyDefinition) -> Void
     let serviceKey: ServiceKey
 
     init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
-        print("FACTORY INIT: Creating FactoryAccumulationDefinition for \(Key.self)")
         self.serviceKey = ServiceKey(Key.FinalValue.self)
         self.valueProvider = wrapAccumulationProvider(accumulationKey: accumulationKey, valueProvider: valueProvider)
+        self.insertionFunc = { dictionary, definition in accumulate(key: accumulationKey,
+                                                        definition: definition,
+                                                        serviceDictionary: dictionary)
+        }
     }
 
     func get(params: Any?, container: Container) throws -> Any {
         try valueProvider(params, container)
+    }
+
+    func insert(into serviceDictionary: ServiceDictionary<any DependencyDefinition>) {
+        insertionFunc(serviceDictionary, self)
     }
 }
 
@@ -44,12 +66,17 @@ final class SingletonAccumulationDefinition: DependencyDefinition {
     private let valueProvider: (Any?, Container) throws -> Any
     private let lock = NSLock()
     let serviceKey: ServiceKey
+    private let insertionFunc: (ServiceDictionary<DependencyDefinition>, DependencyDefinition) -> Void
     private var cachedValue: Any? = nil
 
     init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
         self.accumulationKeyType = accumulationKey
         self.serviceKey = ServiceKey(Key.FinalValue.self)
         self.valueProvider = wrapAccumulationProvider(accumulationKey: accumulationKey, valueProvider: valueProvider)
+        self.insertionFunc = { dictionary, definition in accumulate(key: accumulationKey,
+                                                                    definition: definition,
+                                                                    serviceDictionary: dictionary)
+        }
     }
 
     func get(params: Any?, container: Container) throws -> Any {
@@ -69,7 +96,8 @@ final class SingletonAccumulationDefinition: DependencyDefinition {
         return cachedValue!
     }
 
-    func getAccumulationKeyType() -> Any.Type {
-        accumulationKeyType
+    func insert(into serviceDictionary: ServiceDictionary<any DependencyDefinition>) {
+        insertionFunc(serviceDictionary, self)
     }
+
 }

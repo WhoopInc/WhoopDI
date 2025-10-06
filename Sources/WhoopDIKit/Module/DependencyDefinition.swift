@@ -4,12 +4,12 @@ protocol DependencyDefinition {
     var serviceKey: ServiceKey { get }
     func get(params: Any?, container: Container) throws -> Any
 
-    func insert(into container: Container)
+    func insert(into serviceDictionary: ServiceDictionary<DependencyDefinition>)
 }
 
 extension DependencyDefinition {
-    func insert(into container: Container) {
-        container.serviceDict[self.serviceKey] = self
+    func insert(into serviceDictionary: ServiceDictionary<DependencyDefinition>) {
+        serviceDictionary[self.serviceKey] = self
     }
 }
 
@@ -25,16 +25,22 @@ fileprivate extension DependencyDefinition {
 
 /// Provides the definition of an object factory. A fresh version of this dependency will be provide each time one is requested.
 final class FactoryDefinition: DependencyDefinition {
-    private let factory: (Any?) throws -> Any
+    private let factory: (Any?, Container) throws -> Any
     let serviceKey: ServiceKey
     
     init<T>(name: String?, factory: @escaping (Any?) throws -> T) {
         self.serviceKey = ServiceKey(T.self, name: name)
-        self.factory = factory
+        self.factory = { params, _ in try factory(params) }
     }
-    
+
+    init<T>(name: String?, factory: @escaping (Any?, Container) throws -> T) {
+        self.serviceKey = ServiceKey(T.self, name: name)
+        self.factory = factory
+
+    }
+
     func get(params: Any?, container: Container) throws -> Any {
-        try verifyNotNil(value: factory(params))
+        try verifyNotNil(value: factory(params, container))
     }
 }
 

@@ -122,9 +122,9 @@ open class DependencyModule {
     /// Implement this method to define your dependencies.
     open func defineDependencies() { }
     
-    internal func addToContainer(container: Container) {
+    internal func addToServiceDictionary(serviceDict: ServiceDictionary<DependencyDefinition>) {
         dependencies.forEach { dependency in
-            dependency.insert(into: container)
+            dependency.insert(into: serviceDict)
         }
     }
 }
