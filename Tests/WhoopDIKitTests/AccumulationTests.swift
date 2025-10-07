@@ -158,6 +158,29 @@ final class AccumulationTests: XCTestCase {
         XCTAssertEqual(result2, ["Parent", "Sibling2"])
     }
 
+    func testSiblingInModuleAccumulations() throws {
+        let parent = Container { module in
+            module.accumulateFactory(for: StringAccumulationKey.self) {
+                "Parent"
+            }
+        }
+
+        let child = parent.createChild { module in
+            module.accumulateFactory(for: StringAccumulationKey.self) {
+                "Sibling1"
+            }
+
+            module.accumulateFactory(for: StringAccumulationKey.self) {
+                "Sibling2"
+            }
+        }
+
+        // Each value should be accumulated
+        let result: [String] = child.inject()
+        XCTAssertEqual(result, ["Parent", "Sibling1", "Sibling2"])
+
+    }
+
     // MARK: - Mixed Factory and Singleton Tests
 
     func testMixedFactoryAndSingleton() throws {
@@ -274,6 +297,56 @@ final class AccumulationTests: XCTestCase {
             let _: [String] = try container.get()
         }()) { error in
             XCTAssertTrue(error is DependencyError)
+        }
+    }
+
+    func testSubDependencies() throws {
+        let container = Container(modules: [
+            Dependency1(),
+            Dependency2()
+        ],
+                                  parent: nil)
+        let value: Int = container.inject()
+        XCTAssertEqual(value, 4)
+    }
+}
+
+class Dependency1: DependencyModule {
+    override var moduleDependencies: [DependencyModule] {
+        [SubDependency1()]
+    }
+
+    override func defineDependencies() {
+        accumulateFactory(for: IntSumAccumulationKey.self) {
+            1
+        }
+    }
+}
+
+class SubDependency1: DependencyModule {
+    override func defineDependencies() {
+        accumulateFactory(for: IntSumAccumulationKey.self) {
+            1
+        }
+    }
+}
+
+class Dependency2: DependencyModule {
+    override var moduleDependencies: [DependencyModule] {
+        [SubDependency2()]
+    }
+
+    override func defineDependencies() {
+        accumulateFactory(for: IntSumAccumulationKey.self) {
+            1
+        }
+    }
+}
+
+class SubDependency2: DependencyModule {
+    override func defineDependencies() {
+        accumulateFactory(for: IntSumAccumulationKey.self) {
+            1
         }
     }
 }
