@@ -309,6 +309,125 @@ final class AccumulationTests: XCTestCase {
         let value: Int = container.inject()
         XCTAssertEqual(value, 4)
     }
+
+    // MARK: - Named Accumulation Tests
+
+    func testNamedFactoryAccumulation() throws {
+        let container = Container { module in
+            module.accumulateFactory(name: "list1", for: StringAccumulationKey.self) {
+                "First"
+            }
+            module.accumulateFactory(name: "list2", for: StringAccumulationKey.self) {
+                "Alpha"
+            }
+        }
+
+        let result1: [String] = container.inject("list1")
+        XCTAssertEqual(result1, ["First"])
+
+        let result2: [String] = container.inject("list2")
+        XCTAssertEqual(result2, ["Alpha"])
+    }
+
+    func testNamedSingletonAccumulation() throws {
+        let container = Container { module in
+            module.accumulateSingleton(name: "list1", for: StringAccumulationKey.self) {
+                "First"
+            }
+            module.accumulateSingleton(name: "list2", for: StringAccumulationKey.self) {
+                "Alpha"
+            }
+        }
+
+        let result1: [String] = container.inject("list1")
+        XCTAssertEqual(result1, ["First"])
+
+        let result2: [String] = container.inject("list2")
+        XCTAssertEqual(result2, ["Alpha"])
+    }
+
+    func testNamedAccumulationWithParentChild() throws {
+        let parent = Container { module in
+            module.accumulateFactory(name: "list1", for: StringAccumulationKey.self) {
+                "Parent"
+            }
+        }
+
+        let child = parent.createChild { module in
+            module.accumulateFactory(name: "list1", for: StringAccumulationKey.self) {
+                "Child"
+            }
+        }
+
+        let result: [String] = child.inject("list1")
+        XCTAssertEqual(result, ["Parent", "Child"])
+    }
+
+    func testNamedAndUnnamedAccumulationsAreSeparate() throws {
+        let container = Container { module in
+            module.accumulateFactory(for: StringAccumulationKey.self) {
+                "Unnamed"
+            }
+            module.accumulateFactory(name: "named", for: StringAccumulationKey.self) {
+                "Named"
+            }
+        }
+
+        let unnamedResult: [String] = container.inject()
+        XCTAssertEqual(unnamedResult, ["Unnamed"])
+
+        let namedResult: [String] = container.inject("named")
+        XCTAssertEqual(namedResult, ["Named"])
+    }
+
+    func testNamedAccumulationWithParams() throws {
+        struct Config {
+            let prefix: String
+        }
+
+        let container = Container { module in
+            module.accumulateFactoryWithParams(name: "list1", for: StringAccumulationKey.self) { (config: Config) in
+                "\(config.prefix)-First"
+            }
+            module.accumulateFactoryWithParams(name: "list2", for: StringAccumulationKey.self) { (config: Config) in
+                "\(config.prefix)-Alpha"
+            }
+        }
+
+        let result1: [String] = container.inject("list1", Config(prefix: "Test"))
+        XCTAssertEqual(result1, ["Test-First"])
+
+        let result2: [String] = container.inject("list2", Config(prefix: "Test"))
+        XCTAssertEqual(result2, ["Test-Alpha"])
+    }
+
+    func testNamedSingletonAccumulationIsCached() throws {
+        var callCount1 = 0
+        var callCount2 = 0
+
+        let container = Container { module in
+            module.accumulateSingleton(name: "sum1", for: IntSumAccumulationKey.self) {
+                callCount1 += 1
+                return 10
+            }
+            module.accumulateSingleton(name: "sum2", for: IntSumAccumulationKey.self) {
+                callCount2 += 1
+                return 20
+            }
+        }
+
+        let result1a: Int = container.inject("sum1")
+        let result1b: Int = container.inject("sum1")
+        let result2a: Int = container.inject("sum2")
+        let result2b: Int = container.inject("sum2")
+
+        XCTAssertEqual(result1a, 10)
+        XCTAssertEqual(result1b, 10)
+        XCTAssertEqual(result2a, 20)
+        XCTAssertEqual(result2b, 20)
+        XCTAssertEqual(callCount1, 1, "Named singleton accumulation should only be called once")
+        XCTAssertEqual(callCount2, 1, "Named singleton accumulation should only be called once")
+    }
 }
 
 class Dependency1: DependencyModule {

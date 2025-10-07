@@ -1,12 +1,12 @@
 import Foundation
 
-private func wrapAccumulationProvider<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) -> (Any?, Container) throws -> Any {
+private func wrapAccumulationProvider<Key: AccumulationKey>(name: String?, accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) -> (Any?, Container) throws -> Any {
     return { (params: Any?, container: Container) throws -> Any in
         // Accumulate from the parent value if it exists, then add the current one
         let previousValueFromContainer: Key.FinalValue?
         do {
             if let parent = container.parent {
-                let value: Key.FinalValue = try parent.get(nil, params)
+                let value: Key.FinalValue = try parent.get(name, params)
                 previousValueFromContainer = value
             } else {
                 previousValueFromContainer = nil
@@ -43,9 +43,9 @@ final class FactoryAccumulationDefinition: DependencyDefinition {
     private let insertionFunc: (ServiceDictionary<DependencyDefinition>, FactoryAccumulationDefinition) -> Void
     let serviceKey: ServiceKey
 
-    init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
-        self.serviceKey = ServiceKey(Key.FinalValue.self)
-        self.valueProvider = wrapAccumulationProvider(accumulationKey: accumulationKey, valueProvider: valueProvider)
+    init<Key: AccumulationKey>(name: String?, accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
+        self.serviceKey = ServiceKey(Key.FinalValue.self, name: name)
+        self.valueProvider = wrapAccumulationProvider(name: name, accumulationKey: accumulationKey, valueProvider: valueProvider)
         self.insertionFunc = { dictionary, definition in accumulate(key: accumulationKey,
                                                                     definition: definition,
                                                                     accumulatedValueGetter: valueProvider,
@@ -73,10 +73,10 @@ final class SingletonAccumulationDefinition: DependencyDefinition {
     private var cachedAccumulated: Any? = nil
     private var cachedValue: Any? = nil
 
-    init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
+    init<Key: AccumulationKey>(name: String?, accumulationKey: Key.Type, valueProvider: @escaping (Any?) throws -> Key.AccumulatedValue) {
         self.accumulationKeyType = accumulationKey
-        self.serviceKey = ServiceKey(Key.FinalValue.self)
-        self.valueProvider = wrapAccumulationProvider(accumulationKey: accumulationKey, valueProvider: valueProvider)
+        self.serviceKey = ServiceKey(Key.FinalValue.self, name: name)
+        self.valueProvider = wrapAccumulationProvider(name: name, accumulationKey: accumulationKey, valueProvider: valueProvider)
         self.insertionFunc = { dictionary, definition in accumulate(key: accumulationKey,
                                                                     definition: definition,
                                                                     accumulatedValueGetter: { params in
