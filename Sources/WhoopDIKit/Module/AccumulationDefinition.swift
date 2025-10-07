@@ -24,7 +24,7 @@ private func accumulate<Key: AccumulationKey>(key: Key.Type,
                                               accumulatedValueGetter: @escaping (Any?) throws -> Key.AccumulatedValue,
                                               serviceDictionary: ServiceDictionary<DependencyDefinition>) {
     if let value = serviceDictionary[definition.serviceKey] {
-        serviceDictionary[definition.serviceKey] = FactoryDefinition(name: nil, factory: { params, container in
+        serviceDictionary[definition.serviceKey] = FactoryDefinition(name: definition.serviceKey.name, factory: { params, container in
             guard let currentValue = try value.get(params: params, container: container) as? Key.FinalValue else {
                 fatalError() // This basically shouldn't be possible since we have two things with the same service key, but totally different value types
             }
