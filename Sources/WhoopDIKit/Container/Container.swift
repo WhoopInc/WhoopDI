@@ -2,7 +2,7 @@ import Foundation
 
 public final class Container {
     private let options: WhoopDIOptionProvider
-    internal let parent: Container?
+    private let parent: Container?
 
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
