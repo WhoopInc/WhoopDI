@@ -4,12 +4,15 @@ protocol AccumulationDefinition {
     func getAccumulatedValue() throws -> Any
 }
 
-struct AccumulationDataDefinition: DependencyDefinition {
+class AccumulationDataDefinition: DependencyDefinition {
     var serviceKey: ServiceKey
     
     private let accumulationFunc: (Any, Any) throws -> Any
     private let defaultValue: (Container?) throws -> Any
     private var accumulatedDependencies: [AccumulationDefinition]
+    private var shouldCacheValue: Bool
+    private let lock = NSLock()
+    private var cachedValue: Any?
 
     init<Key: AccumulationKey>(name: String? = nil, key: Key.Type, accumulatedDependencies: [AccumulationDefinition] = []) {
         self.serviceKey = ServiceKey(Key.FinalValue.self, name: name)
@@ -29,17 +32,41 @@ struct AccumulationDataDefinition: DependencyDefinition {
             }
         }
         self.accumulatedDependencies = accumulatedDependencies
+        self.shouldCacheValue = accumulatedDependencies.allSatisfy { definition in definition is SingletonAccumulationDefinition }
     }
 
     func get(params: Any?, container: Container) throws -> Any {
+        if shouldCacheValue {
+            if let cachedValue {
+                return cachedValue
+            }
+
+            lock.lock()
+            defer { lock.unlock() }
+            if let cachedValue {
+                return cachedValue
+            }
+
+            let newValue = try self.getAccumulatedValue(container: container)
+            cachedValue = newValue
+            return newValue
+
+        } else {
+            return try getAccumulatedValue(container: container)
+        }
+
+    }
+
+    private func getAccumulatedValue(container: Container) throws -> Any {
         try accumulatedDependencies.reduce(defaultValue(container.parent)) { partialResult, next in
             try accumulationFunc(partialResult, next.getAccumulatedValue())
         }
     }
 
     func insert(into serviceDictionary: ServiceDictionary<any DependencyDefinition>) {
-        if let otherDefinition = serviceDictionary[self.serviceKey], var accumulatedDefinition = otherDefinition as? AccumulationDataDefinition {
+        if let otherDefinition = serviceDictionary[self.serviceKey], let accumulatedDefinition = otherDefinition as? AccumulationDataDefinition {
             accumulatedDefinition.accumulatedDependencies.append(contentsOf: self.accumulatedDependencies)
+            accumulatedDefinition.shouldCacheValue = accumulatedDefinition.shouldCacheValue && self.shouldCacheValue
             serviceDictionary[self.serviceKey] = accumulatedDefinition
         } else { // If we aren't already accumulating, we are done
             serviceDictionary[self.serviceKey] = self

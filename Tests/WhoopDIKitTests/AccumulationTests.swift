@@ -385,6 +385,26 @@ final class AccumulationTests: XCTestCase {
         XCTAssertEqual(callCount2, 1, "Named singleton accumulation should only be called once")
     }
 
+    func testSingletonAccumulationIsCachedForKey() throws {
+        let container = Container { module in
+            module.accumulateSingleton(for: AccumulationCountKey.self) {
+                2
+            }
+        }
+
+        let child = container.createChild { module in
+            module.accumulateSingleton(for: AccumulationCountKey.self) {
+                3
+            }
+        }
+
+        let acc: Int = try child.get()
+        let acc2: Int = try child.get()
+        XCTAssertEqual(acc, 5)
+        XCTAssertEqual(acc2, 5)
+        XCTAssertEqual(AccumulationCountKey.count, 2) // there are 2 dependencies, but only called once
+    }
+
     // MARK: - Stress Test
     func testSubDependencies_many() throws {
         let upperLimit  = Int(pow(2.0, 14.0))
@@ -446,5 +466,16 @@ class ManyDependency: DependencyModule {
         accumulateFactory(for: IntSumAccumulationKey.self) {
             1
         }
+    }
+}
+
+class AccumulationCountKey: AccumulationKey {
+    static nonisolated(unsafe) var count: Int = 0
+
+    static let defaultValue: Int = 0
+
+    static func accumulate(current: Int, next: Int) -> Int {
+        count += 1
+        return current + next
     }
 }
