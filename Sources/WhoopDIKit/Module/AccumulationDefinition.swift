@@ -25,10 +25,10 @@ class AccumulationDataDefinition: DependencyDefinition {
                     let topLevel: Key.FinalValue = try parent.get(name, nil)
                     return topLevel
                 } catch DependencyError.missingDependency {
-                    return key.defaultValue
+                    return key.initialValue
                 }
             } else {
-                return key.defaultValue
+                return key.initialValue
             }
         }
         self.accumulatedDependencies = accumulatedDependencies

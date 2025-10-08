@@ -6,7 +6,7 @@ struct StringAccumulationKey: AccumulationKey {
     typealias FinalValue = [String]
     typealias AccumulatedValue = String
 
-    static var defaultValue: [String] { [] }
+    static var initialValue: [String] { [] }
 
     static func accumulate(current: [String], next: String) -> [String] {
         current + [next]
@@ -17,7 +17,7 @@ struct IntSumAccumulationKey: AccumulationKey {
     typealias FinalValue = Int
     typealias AccumulatedValue = Int
 
-    static var defaultValue: Int { 0 }
+    static var initialValue: Int { 0 }
 
     static func accumulate(current: Int, next: Int) -> Int {
         current + next
@@ -472,7 +472,7 @@ class ManyDependency: DependencyModule {
 class AccumulationCountKey: AccumulationKey {
     static nonisolated(unsafe) var count: Int = 0
 
-    static let defaultValue: Int = 0
+    static let initialValue: Int = 0
 
     static func accumulate(current: Int, next: Int) -> Int {
         count += 1

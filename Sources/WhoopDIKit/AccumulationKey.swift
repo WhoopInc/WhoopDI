@@ -8,7 +8,7 @@
 ///     typealias FinalValue = [Logger]
 ///     typealias AccumulatedValue = Logger
 ///
-///     static var defaultValue: [Logger] { [] }
+///     static var initialValue: [Logger] { [] }
 ///
 ///     static func accumulate(current: [Logger], next: Logger) -> [Logger] {
 ///         current + [next]
@@ -22,8 +22,8 @@ public protocol AccumulationKey {
     /// The type of individual values that modules contribute
     associatedtype AccumulatedValue
 
-    /// The default value to start accumulation with
-    static var defaultValue: FinalValue { get }
+    /// The initial value to start accumulation with
+    static var initialValue: FinalValue { get }
 
     /// Combines the current accumulated value with the next contributed value
     /// - Parameters:
