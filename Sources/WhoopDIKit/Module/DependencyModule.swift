@@ -72,17 +72,9 @@ open class DependencyModule {
     ///   - key: The AccumulationKey type that defines how values are accumulated
     ///   - provideValue: A closure that provides the value to accumulate
     public final func accumulateFactory<Key: AccumulationKey>(name: String? = nil, for key: Key.Type, provideValue: @escaping () throws -> Key.AccumulatedValue) {
-        dependencies.append(FactoryAccumulationDefinition(name: name, accumulationKey: key, valueProvider: { _ in try provideValue() }))
-    }
-
-    /// Defines an accumulation that is recalculated on each request with parameters.
-    /// Values are accumulated across the container hierarchy using the AccumulationKey's accumulate function.
-    /// - Parameters:
-    ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
-    ///   - key: The AccumulationKey type that defines how values are accumulated
-    ///   - provideValue: A closure that provides the value to accumulate, with parameters
-    public final func accumulateFactoryWithParams<Key: AccumulationKey, Param>(name: String? = nil, for key: Key.Type, provideValue: @escaping (Param) throws -> Key.AccumulatedValue) {
-        dependencies.append(FactoryAccumulationDefinition(name: name, accumulationKey: key, valueProvider: factoryConverter(name, provideValue)))
+        dependencies.append(AccumulationDataDefinition(name: name, key: key, accumulatedDependencies: [
+            FactoryAccumulationDefinition(accumulationKey: Key.self, valueProvider: provideValue)
+        ]))
     }
 
     /// Defines an accumulation that is calculated once and cached.
@@ -93,18 +85,9 @@ open class DependencyModule {
     ///   - key: The AccumulationKey type that defines how values are accumulated
     ///   - provideValue: A closure that provides the value to accumulate
     public final func accumulateSingleton<Key: AccumulationKey>(name: String? = nil, for key: Key.Type, provideValue: @escaping () throws -> Key.AccumulatedValue) {
-        dependencies.append(SingletonAccumulationDefinition(name: name, accumulationKey: key, valueProvider: { _ in try provideValue() }))
-    }
-
-    /// Defines an accumulation that is calculated once and cached with parameters.
-    /// Values are accumulated across the container hierarchy using the AccumulationKey's accumulate function.
-    /// The accumulated value is computed once and reused on subsequent requests.
-    /// - Parameters:
-    ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
-    ///   - key: The AccumulationKey type that defines how values are accumulated
-    ///   - provideValue: A closure that provides the value to accumulate, with parameters
-    public final func accumulateSingletonWithParams<Key: AccumulationKey, Param>(name: String? = nil, for key: Key.Type, provideValue: @escaping (Param) throws -> Key.AccumulatedValue) {
-        dependencies.append(SingletonAccumulationDefinition(name: name, accumulationKey: key, valueProvider: factoryConverter(name, provideValue)))
+        dependencies.append(AccumulationDataDefinition(name: name, key: key, accumulatedDependencies: [
+            SingletonAccumulationDefinition(accumulationKey: Key.self, valueProvider: provideValue)
+        ]))
     }
 
     /// Fetches a dependency from the object graph. This is intended to be used within the factory closure provided to `factory`, `single`, etc.

@@ -225,30 +225,7 @@ final class AccumulationTests: XCTestCase {
         XCTAssertEqual(intResult, 30)
     }
 
-    // MARK: - Parameters Tests
-
-    func testAccumulationWithParams() throws {
-        struct Config {
-            let prefix: String
-        }
-
-        let container = Container { module in
-            module.accumulateFactoryWithParams(for: StringAccumulationKey.self) { (config: Config) in
-                "\(config.prefix)-First"
-            }
-        }
-
-        let child = container.createChild { module in
-            module.accumulateFactoryWithParams(for: StringAccumulationKey.self) { (config: Config) in
-                "\(config.prefix)-Second"
-            }
-        }
-
-        let result: [String] = child.inject(nil, Config(prefix: "Test"))
-        XCTAssertEqual(result, ["Test-First", "Test-Second"])
-    }
-
-    // MARK: - Singleton Caching Tests
+     // MARK: - Singleton Caching Tests
 
     func testSingletonAccumulationIsCached() throws {
         var callCount = 0
@@ -380,27 +357,6 @@ final class AccumulationTests: XCTestCase {
         XCTAssertEqual(namedResult, ["Named"])
     }
 
-    func testNamedAccumulationWithParams() throws {
-        struct Config {
-            let prefix: String
-        }
-
-        let container = Container { module in
-            module.accumulateFactoryWithParams(name: "list1", for: StringAccumulationKey.self) { (config: Config) in
-                "\(config.prefix)-First"
-            }
-            module.accumulateFactoryWithParams(name: "list2", for: StringAccumulationKey.self) { (config: Config) in
-                "\(config.prefix)-Alpha"
-            }
-        }
-
-        let result1: [String] = container.inject("list1", Config(prefix: "Test"))
-        XCTAssertEqual(result1, ["Test-First"])
-
-        let result2: [String] = container.inject("list2", Config(prefix: "Test"))
-        XCTAssertEqual(result2, ["Test-Alpha"])
-    }
-
     func testNamedSingletonAccumulationIsCached() throws {
         var callCount1 = 0
         var callCount2 = 0
@@ -427,6 +383,17 @@ final class AccumulationTests: XCTestCase {
         XCTAssertEqual(result2b, 20)
         XCTAssertEqual(callCount1, 1, "Named singleton accumulation should only be called once")
         XCTAssertEqual(callCount2, 1, "Named singleton accumulation should only be called once")
+    }
+
+    // MARK: - Stress Test
+    func testSubDependencies_many() throws {
+        let upperLimit  = Int(pow(2.0, 14.0))
+        let modules = (0..<upperLimit).map { _ in
+            ManyDependency()
+        }
+        let container = Container(modules: modules, parent: nil)
+        let value: Int = container.inject()
+        XCTAssertEqual(value, upperLimit)
     }
 }
 
@@ -463,6 +430,18 @@ class Dependency2: DependencyModule {
 }
 
 class SubDependency2: DependencyModule {
+    override func defineDependencies() {
+        accumulateFactory(for: IntSumAccumulationKey.self) {
+            1
+        }
+    }
+}
+
+class ManyDependency: DependencyModule {
+    override var serviceKey: ServiceKey {
+        ServiceKey(type(of: self), name: UUID.init().uuidString)
+    }
+
     override func defineDependencies() {
         accumulateFactory(for: IntSumAccumulationKey.self) {
             1
