@@ -2,24 +2,23 @@ import XCTest
 @testable import WhoopDIKit
 
 class DependencyDefinitionTests: XCTestCase {
-    let container = Container()
     func test_factory_get_noParams() {
         let definition = FactoryDefinition(name: nil) { _ in "value" }
-        XCTAssertEqual("value", try definition.get(params: nil, container: container) as! String)
+        XCTAssertEqual("value", try definition.get(params: nil, parent: nil) as! String)
     }
     
     func test_factory_get_throwsOnNil() {
         let expectedError = DependencyError.nilDependency(ServiceKey(Optional<String>.self))
         let definition = FactoryDefinition(name: nil) { _ in nil as String? }
         
-        XCTAssertThrowsError(try definition.get(params: nil, container: container)) { error in
+        XCTAssertThrowsError(try definition.get(params: nil, parent: nil)) { error in
             XCTAssertEqual(expectedError, error as! DependencyError)
         }
     }
     
     func test_factory_get_withParams() {
         let definition = FactoryDefinition(name: nil) { params in "value with \(params as! String)" }
-        XCTAssertEqual("value with a param", try definition.get(params: "a param", container: container) as! String)
+        XCTAssertEqual("value with a param", try definition.get(params: "a param", parent: nil) as! String)
     }
     
     func test_factory_serviceKey_noName() {
@@ -39,8 +38,8 @@ class DependencyDefinitionTests: XCTestCase {
             return callCount
         }
         
-        XCTAssertEqual(1, try definition.get(params: nil, container: container) as! Int)
-        XCTAssertEqual(1, try definition.get(params: nil, container: container) as! Int)
+        XCTAssertEqual(1, try definition.get(params: nil, parent: nil) as! Int)
+        XCTAssertEqual(1, try definition.get(params: nil, parent: nil) as! Int)
     }
     
     func test_singleton_get_recoversFromThrow() {
@@ -55,26 +54,26 @@ class DependencyDefinitionTests: XCTestCase {
             return callCount
         }
         
-        XCTAssertThrowsError(try definition.get(params: nil, container: container)) { error in
+        XCTAssertThrowsError(try definition.get(params: nil, parent: nil)) { error in
             XCTAssertEqual(expectedError, error as! DependencyError)
         }
         
-        XCTAssertEqual(2, try definition.get(params: nil, container: container) as! Int)
-        XCTAssertEqual(2, try definition.get(params: nil, container: container) as! Int)
+        XCTAssertEqual(2, try definition.get(params: nil, parent: nil) as! Int)
+        XCTAssertEqual(2, try definition.get(params: nil, parent: nil) as! Int)
     }
     
     func test_singleton_get_throwsOnNil() {
         let expectedError = DependencyError.nilDependency(ServiceKey(Optional<String>.self))
         let definition = SingletonDefinition(name: nil) { _ in nil as String? }
         
-        XCTAssertThrowsError(try definition.get(params: nil, container: container)) { error in
+        XCTAssertThrowsError(try definition.get(params: nil, parent: nil)) { error in
             XCTAssertEqual(expectedError, error as! DependencyError)
         }
     }
     
     func test_singleton_get_withParams() {
         let definition = SingletonDefinition(name: nil) { params in "value with \(params as! String)" }
-        XCTAssertEqual("value with a param", try definition.get(params: "a param", container: container) as! String)
+        XCTAssertEqual("value with a param", try definition.get(params: "a param", parent: nil) as! String)
     }
     
     func test_singleton_serviceKey_noName() {

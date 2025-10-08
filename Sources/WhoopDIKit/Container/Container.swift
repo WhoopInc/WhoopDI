@@ -146,9 +146,9 @@ public final class Container {
                 _ params: Any? = nil) throws -> T {
         let serviceKey = ServiceKey(T.self, name: name)
         let definition = getDefinition(serviceKey)
-        if let value = try definition?.get(params: params, container: self) as? T {
+        if let value = try definition?.get(params: params, parent: parent) as? T {
             return value
-        } else if let parent = parent, let value = try parent.getDefinition(serviceKey)?.get(params: params, container: parent) as? T {
+        } else if let parent = parent, let value = try parent.getDefinition(serviceKey)?.get(params: params, parent: parent.parent) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T
@@ -164,7 +164,7 @@ public final class Container {
             serviceDict.allKeys().forEach { serviceKey in
                 let definition = getDefinition(serviceKey)
                 do {
-                    let _ = try definition?.get(params: paramsDict[serviceKey], container: self)
+                    let _ = try definition?.get(params: paramsDict[serviceKey], parent: parent)
                 } catch {
                     onFailure(error)
                 }

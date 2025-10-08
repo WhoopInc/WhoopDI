@@ -35,7 +35,7 @@ class AccumulationDataDefinition: DependencyDefinition {
         self.shouldCacheValue = accumulatedDependencies.allSatisfy { definition in definition is SingletonAccumulationDefinition }
     }
 
-    func get(params: Any?, container: Container) throws -> Any {
+    func get(params: Any?, parent: Container?) throws -> Any {
         if shouldCacheValue {
             if let cachedValue {
                 return cachedValue
@@ -47,18 +47,18 @@ class AccumulationDataDefinition: DependencyDefinition {
                 return cachedValue
             }
 
-            let newValue = try self.getAccumulatedValue(container: container)
+            let newValue = try self.getAccumulatedValue(parent: parent)
             cachedValue = newValue
             return newValue
 
         } else {
-            return try getAccumulatedValue(container: container)
+            return try getAccumulatedValue(parent: parent)
         }
 
     }
 
-    private func getAccumulatedValue(container: Container) throws -> Any {
-        try accumulatedDependencies.reduce(defaultValue(container.parent)) { partialResult, next in
+    private func getAccumulatedValue(parent: Container?) throws -> Any {
+        try accumulatedDependencies.reduce(defaultValue(parent)) { partialResult, next in
             try accumulationFunc(partialResult, next.getAccumulatedValue())
         }
     }
