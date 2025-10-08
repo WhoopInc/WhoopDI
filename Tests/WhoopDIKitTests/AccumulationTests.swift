@@ -1,5 +1,6 @@
-import XCTest
+import Testing
 @testable import WhoopDIKit
+import Foundation
 
 // Test accumulation keys
 struct StringAccumulationKey: AccumulationKey {
@@ -24,11 +25,12 @@ struct IntSumAccumulationKey: AccumulationKey {
     }
 }
 
-final class AccumulationTests: XCTestCase {
+struct AccumulationTests {
 
     // MARK: - Single Value Accumulation Tests
 
-    func testSingleFactoryAccumulation() throws {
+    @Test
+    func testSingleFactoryAccumulation() {
         let container = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
                 "Hello"
@@ -36,10 +38,11 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = container.inject()
-        XCTAssertEqual(result, ["Hello"])
+        #expect(result == ["Hello"])
     }
 
-    func testSingleSingletonAccumulation() throws {
+    @Test
+    func testSingleSingletonAccumulation() {
         let container = Container { module in
             module.accumulateSingleton(for: StringAccumulationKey.self) {
                 "World"
@@ -47,9 +50,10 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = container.inject()
-        XCTAssertEqual(result, ["World"])
+        #expect(result == ["World"])
     }
 
+    @Test
     func testMultipleAccumulationsViaChildContainers() throws {
         let container = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -70,11 +74,12 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = child2.inject()
-        XCTAssertEqual(result, ["First", "Second", "Third"])
+        #expect(result == ["First", "Second", "Third"])
     }
 
     // MARK: - Parent-Child Accumulation Tests
 
+    @Test
     func testParentChildAccumulation() throws {
         let parent = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -89,9 +94,10 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = child.inject()
-        XCTAssertEqual(result, ["Parent", "Child"])
+        #expect(result == ["Parent", "Child"])
     }
 
+    @Test
     func testMultipleLevelAccumulation() throws {
         let grandparent = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -112,9 +118,10 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = child.inject()
-        XCTAssertEqual(result, ["Grandparent", "Parent", "Child"])
+        #expect(result == ["Grandparent", "Parent", "Child"])
     }
 
+    @Test
     func testParentOnlyAccumulation() throws {
         let parent = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -126,11 +133,12 @@ final class AccumulationTests: XCTestCase {
 
         // Child should inherit parent's accumulation
         let result: [String] = child.inject()
-        XCTAssertEqual(result, ["Parent"])
+        #expect(result == ["Parent"])
     }
 
     // MARK: - Sibling Container Tests
 
+    @Test
     func testSiblingContainerAccumulations() throws {
         let parent = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -152,12 +160,13 @@ final class AccumulationTests: XCTestCase {
 
         // Each sibling should have parent + their own value
         let result1: [String] = sibling1.inject()
-        XCTAssertEqual(result1, ["Parent", "Sibling1"])
+        #expect(result1 == ["Parent", "Sibling1"])
 
         let result2: [String] = sibling2.inject()
-        XCTAssertEqual(result2, ["Parent", "Sibling2"])
+        #expect(result2 == ["Parent", "Sibling2"])
     }
 
+    @Test
     func testSiblingInModuleAccumulations() throws {
         let parent = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -177,12 +186,12 @@ final class AccumulationTests: XCTestCase {
 
         // Each value should be accumulated
         let result: [String] = child.inject()
-        XCTAssertEqual(result, ["Parent", "Sibling1", "Sibling2"])
+        #expect(result == ["Parent", "Sibling1", "Sibling2"])
 
     }
 
     // MARK: - Mixed Factory and Singleton Tests
-
+    @Test
     func testMixedFactoryAndSingleton() throws {
         let container = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -197,11 +206,12 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = child.inject()
-        XCTAssertEqual(result, ["Factory", "Singleton"])
+        #expect(result == ["Factory", "Singleton"])
     }
 
     // MARK: - Different Accumulation Key Tests
 
+    @Test
     func testDifferentAccumulationKeys() throws {
         let container = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -219,14 +229,15 @@ final class AccumulationTests: XCTestCase {
         }
 
         let stringResult: [String] = container.inject()
-        XCTAssertEqual(stringResult, ["Hello"])
+        #expect(stringResult == ["Hello"])
 
         let intResult: Int = child.inject()
-        XCTAssertEqual(intResult, 30)
+        #expect(intResult == 30)
     }
 
      // MARK: - Singleton Caching Tests
 
+    @Test
     func testSingletonAccumulationIsCached() throws {
         var callCount = 0
 
@@ -240,11 +251,12 @@ final class AccumulationTests: XCTestCase {
         let result1: Int = container.inject()
         let result2: Int = container.inject()
 
-        XCTAssertEqual(result1, 10)
-        XCTAssertEqual(result2, 10)
-        XCTAssertEqual(callCount, 1, "Singleton accumulation should only be called once")
+        #expect(result1 == 10)
+        #expect(result2 == 10)
+        #expect(callCount == 1, "Singleton accumulation should only be called once")
     }
 
+    @Test
     func testFactoryAccumulationIsNotCached() throws {
         var callCount = 0
 
@@ -258,25 +270,25 @@ final class AccumulationTests: XCTestCase {
         let result1: Int = container.inject()
         let result2: Int = container.inject()
 
-        XCTAssertEqual(result1, 10)
-        XCTAssertEqual(result2, 10)
-        XCTAssertEqual(callCount, 2, "Factory accumulation should be called each time")
+        #expect(result1 == 10)
+        #expect(result2 == 10)
+        #expect(callCount == 2, "Factory accumulation should be called each time")
     }
 
     // MARK: - Empty Accumulation Tests
 
+    @Test
     func testEmptyAccumulationReturnsDefaultWhenNoDefinition() throws {
         // When there's no accumulation definition, inject should fail with missing dependency
         // This is expected behavior - you need at least one accumulation definition
         let container = Container()
 
-        XCTAssertThrowsError(try {
+        #expect(throws: DependencyError.self) {
             let _: [String] = try container.get()
-        }()) { error in
-            XCTAssertTrue(error is DependencyError)
         }
     }
 
+    @Test
     func testSubDependencies() throws {
         let container = Container(modules: [
             Dependency1(),
@@ -284,11 +296,12 @@ final class AccumulationTests: XCTestCase {
         ],
                                   parent: nil)
         let value: Int = container.inject()
-        XCTAssertEqual(value, 4)
+        #expect(value == 4)
     }
 
     // MARK: - Named Accumulation Tests
 
+    @Test
     func testNamedFactoryAccumulation() throws {
         let container = Container { module in
             module.accumulateFactory(name: "list1", for: StringAccumulationKey.self) {
@@ -300,12 +313,13 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result1: [String] = container.inject("list1")
-        XCTAssertEqual(result1, ["First"])
+        #expect(result1 == ["First"])
 
         let result2: [String] = container.inject("list2")
-        XCTAssertEqual(result2, ["Alpha"])
+        #expect(result2 == ["Alpha"])
     }
 
+    @Test
     func testNamedSingletonAccumulation() throws {
         let container = Container { module in
             module.accumulateSingleton(name: "list1", for: StringAccumulationKey.self) {
@@ -317,12 +331,13 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result1: [String] = container.inject("list1")
-        XCTAssertEqual(result1, ["First"])
+        #expect(result1 == ["First"])
 
         let result2: [String] = container.inject("list2")
-        XCTAssertEqual(result2, ["Alpha"])
+        #expect(result2 == ["Alpha"])
     }
 
+    @Test
     func testNamedAccumulationWithParentChild() throws {
         let parent = Container { module in
             module.accumulateFactory(name: "list1", for: StringAccumulationKey.self) {
@@ -337,9 +352,10 @@ final class AccumulationTests: XCTestCase {
         }
 
         let result: [String] = child.inject("list1")
-        XCTAssertEqual(result, ["Parent", "Child"])
+        #expect(result == ["Parent", "Child"])
     }
 
+    @Test
     func testNamedAndUnnamedAccumulationsAreSeparate() throws {
         let container = Container { module in
             module.accumulateFactory(for: StringAccumulationKey.self) {
@@ -351,12 +367,13 @@ final class AccumulationTests: XCTestCase {
         }
 
         let unnamedResult: [String] = container.inject()
-        XCTAssertEqual(unnamedResult, ["Unnamed"])
+        #expect(unnamedResult == ["Unnamed"])
 
         let namedResult: [String] = container.inject("named")
-        XCTAssertEqual(namedResult, ["Named"])
+        #expect(namedResult == ["Named"])
     }
 
+    @Test
     func testNamedSingletonAccumulationIsCached() throws {
         var callCount1 = 0
         var callCount2 = 0
@@ -377,14 +394,15 @@ final class AccumulationTests: XCTestCase {
         let result2a: Int = container.inject("sum2")
         let result2b: Int = container.inject("sum2")
 
-        XCTAssertEqual(result1a, 10)
-        XCTAssertEqual(result1b, 10)
-        XCTAssertEqual(result2a, 20)
-        XCTAssertEqual(result2b, 20)
-        XCTAssertEqual(callCount1, 1, "Named singleton accumulation should only be called once")
-        XCTAssertEqual(callCount2, 1, "Named singleton accumulation should only be called once")
+        #expect(result1a == 10)
+        #expect(result1b == 10)
+        #expect(result2a == 20)
+        #expect(result2b == 20)
+        #expect(callCount1 == 1, "Named singleton accumulation should only be called once")
+        #expect(callCount2 == 1, "Named singleton accumulation should only be called once")
     }
 
+    @Test
     func testSingletonAccumulationIsCachedForKey() throws {
         let container = Container { module in
             module.accumulateSingleton(for: AccumulationCountKey.self) {
@@ -400,12 +418,13 @@ final class AccumulationTests: XCTestCase {
 
         let acc: Int = try child.get()
         let acc2: Int = try child.get()
-        XCTAssertEqual(acc, 5)
-        XCTAssertEqual(acc2, 5)
-        XCTAssertEqual(AccumulationCountKey.count, 2) // there are 2 dependencies, but only called once
+        #expect(acc == 5)
+        #expect(acc2 == 5)
+        #expect(AccumulationCountKey.count == 2) // there are 2 dependencies, but only called once
     }
 
     // MARK: - Stress Test
+    @Test
     func testSubDependencies_many() throws {
         let upperLimit  = Int(pow(2.0, 14.0))
         let modules = (0..<upperLimit).map { _ in
@@ -413,7 +432,7 @@ final class AccumulationTests: XCTestCase {
         }
         let container = Container(modules: modules, parent: nil)
         let value: Int = container.inject()
-        XCTAssertEqual(value, upperLimit)
+        #expect(value == upperLimit)
     }
 }
 
