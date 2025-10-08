@@ -416,11 +416,31 @@ struct AccumulationTests {
             }
         }
 
-        let acc: Int = try child.get()
-        let acc2: Int = try child.get()
+        let acc: Int = child.inject()
+        let acc2: Int = child.inject()
         #expect(acc == 5)
         #expect(acc2 == 5)
         #expect(AccumulationCountKey.count == 2) // there are 2 dependencies, but only called once
+    }
+
+    @Test
+    func testItWorksWithSubDependency() throws {
+        let container = Container { module in
+            module.factory {
+                let intValue: Int = try module.get()
+                return "\(intValue)"
+            }
+        }
+
+        let child = container.createChild { module in
+            module.accumulateSingleton(for: IntSumAccumulationKey.self) {
+                3
+            }
+        }
+
+        let newValue: String = child.inject()
+        #expect(newValue == "3")
+
     }
 
     // MARK: - Stress Test
