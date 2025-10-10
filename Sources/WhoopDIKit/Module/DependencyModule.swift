@@ -65,6 +65,39 @@ open class DependencyModule {
         }
     }
     
+    /// Defines an accumulation that is recalculated on each request.
+    /// Values are accumulated across the container hierarchy using the AccumulationKey's accumulate function.
+    /// - Parameters:
+    ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
+    ///   - key: The AccumulationKey type that defines how values are accumulated
+    ///   - provideValue: A closure that provides the value to accumulate
+    public final func accumulateFactory<Key: AccumulationKey>(
+        name: String? = nil,
+        for key: Key.Type,
+        provideValue: @escaping () throws -> Key.AccumulatedValue) {
+        dependencies.append(AccumulationDataDefinition(
+            name: name,
+            key: key,
+            accumulatedDependency: FactoryDefinition(name: nil, factory: { _ in try provideValue() })))
+    }
+
+    /// Defines an accumulation that is calculated once and cached.
+    /// Values are accumulated across the container hierarchy using the AccumulationKey's accumulate function.
+    /// The accumulated value is computed once and reused on subsequent requests.
+    /// - Parameters:
+    ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
+    ///   - key: The AccumulationKey type that defines how values are accumulated
+    ///   - provideValue: A closure that provides the value to accumulate
+    public final func accumulateSingleton<Key: AccumulationKey>(
+        name: String? = nil,
+        for key: Key.Type,
+        provideValue: @escaping () throws -> Key.AccumulatedValue) {
+        dependencies.append(AccumulationDataDefinition(
+            name: name,
+            key: key,
+            accumulatedDependency: SingletonDefinition(name: nil, factory: { _ in try provideValue() })))
+    }
+
     /// Fetches a dependency from the object graph. This is intended to be used within the factory closure provided to `factory`, `single`, etc.
     /// For example:
     /// ```
@@ -86,7 +119,7 @@ open class DependencyModule {
     
     internal func addToServiceDictionary(serviceDict: ServiceDictionary<DependencyDefinition>) {
         dependencies.forEach { dependency in
-            serviceDict[dependency.serviceKey] = dependency
+            dependency.insert(into: serviceDict)
         }
     }
 }
