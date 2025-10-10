@@ -148,7 +148,10 @@ public final class Container {
         let definition = getDefinition(serviceKey)
         if let value = try definition?.get(params: params, parent: parent) as? T {
             return value
-        } else if let parent = parent, let value = try parent.getDefinition(serviceKey)?.get(params: params, parent: parent.parent) as? T {
+        } else if let parent = parent,
+                  /// Get the definition from teh parent if it doesn't exist here.
+                  /// **Important**: need to pass grandparent as its parent
+                    let value = try parent.getDefinition(serviceKey)?.get(params: params, parent: parent.parent) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T

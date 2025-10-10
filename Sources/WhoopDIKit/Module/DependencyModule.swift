@@ -71,10 +71,14 @@ open class DependencyModule {
     ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
     ///   - key: The AccumulationKey type that defines how values are accumulated
     ///   - provideValue: A closure that provides the value to accumulate
-    public final func accumulateFactory<Key: AccumulationKey>(name: String? = nil, for key: Key.Type, provideValue: @escaping () throws -> Key.AccumulatedValue) {
-        dependencies.append(AccumulationDataDefinition(name: name, key: key, accumulatedDependencies: [
-            FactoryAccumulationDefinition(accumulationKey: Key.self, valueProvider: provideValue)
-        ]))
+    public final func accumulateFactory<Key: AccumulationKey>(
+        name: String? = nil,
+        for key: Key.Type,
+        provideValue: @escaping () throws -> Key.AccumulatedValue) {
+        dependencies.append(AccumulationDataDefinition(
+            name: name,
+            key: key,
+            accumulatedDependency: FactoryDefinition(name: nil, factory: { _ in try provideValue() })))
     }
 
     /// Defines an accumulation that is calculated once and cached.
@@ -84,10 +88,14 @@ open class DependencyModule {
     ///   - name: An optional name which can be used to disambiguate between multiple accumulations of the same type.
     ///   - key: The AccumulationKey type that defines how values are accumulated
     ///   - provideValue: A closure that provides the value to accumulate
-    public final func accumulateSingleton<Key: AccumulationKey>(name: String? = nil, for key: Key.Type, provideValue: @escaping () throws -> Key.AccumulatedValue) {
-        dependencies.append(AccumulationDataDefinition(name: name, key: key, accumulatedDependencies: [
-            SingletonAccumulationDefinition(accumulationKey: Key.self, valueProvider: provideValue)
-        ]))
+    public final func accumulateSingleton<Key: AccumulationKey>(
+        name: String? = nil,
+        for key: Key.Type,
+        provideValue: @escaping () throws -> Key.AccumulatedValue) {
+        dependencies.append(AccumulationDataDefinition(
+            name: name,
+            key: key,
+            accumulatedDependency: SingletonDefinition(name: nil, factory: { _ in try provideValue() })))
     }
 
     /// Fetches a dependency from the object graph. This is intended to be used within the factory closure provided to `factory`, `single`, etc.

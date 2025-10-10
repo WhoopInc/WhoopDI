@@ -1,25 +1,28 @@
 import Foundation
 
-protocol AccumulationDefinition {
-    func getAccumulatedValue() throws -> Any
-}
-
 class AccumulationDataDefinition: DependencyDefinition {
-    var serviceKey: ServiceKey
-    
+    let serviceKey: ServiceKey
+
     private let accumulationFunc: (Any, Any) throws -> Any
     private let defaultValue: (Container?) throws -> Any
-    private var accumulatedDependencies: [AccumulationDefinition]
+    private var accumulatedDependencies: [DependencyDefinition]
     private var shouldCacheValue: Bool
     private let lock = NSLock()
     private var cachedValue: Any?
 
-    init<Key: AccumulationKey>(name: String? = nil, key: Key.Type, accumulatedDependencies: [AccumulationDefinition] = []) {
+    init<Key: AccumulationKey>(name: String? = nil,
+                               key: Key.Type,
+                               accumulatedDependency: DependencyDefinition) {
         self.serviceKey = ServiceKey(Key.FinalValue.self, name: name)
         self.accumulationFunc = { accumulated, next in
+            // Since we only create the values internally (and use the same service key, which has the same type)
+            // we can force cast here.
             key.accumulate(current: accumulated as! Key.FinalValue, next: next as! Key.AccumulatedValue)
         }
         self.defaultValue = { parent in
+            // Try to get the previously accumulated value from the parent
+            // If there is none, use the initial value
+            // If another error occurs other than missingDependency, throw it
             if let parent {
                 do {
                     let topLevel: Key.FinalValue = try parent.get(name, nil)
@@ -31,8 +34,8 @@ class AccumulationDataDefinition: DependencyDefinition {
                 return key.initialValue
             }
         }
-        self.accumulatedDependencies = accumulatedDependencies
-        self.shouldCacheValue = accumulatedDependencies.allSatisfy { definition in definition is SingletonAccumulationDefinition }
+        self.accumulatedDependencies = [accumulatedDependency]
+        self.shouldCacheValue = accumulatedDependency is SingletonDefinition
     }
 
     func get(params: Any?, parent: Container?) throws -> Any {
@@ -59,7 +62,7 @@ class AccumulationDataDefinition: DependencyDefinition {
 
     private func getAccumulatedValue(parent: Container?) throws -> Any {
         try accumulatedDependencies.reduce(defaultValue(parent)) { partialResult, next in
-            try accumulationFunc(partialResult, next.getAccumulatedValue())
+            try accumulationFunc(partialResult, next.get(params: nil, parent: parent))
         }
     }
 
@@ -72,50 +75,4 @@ class AccumulationDataDefinition: DependencyDefinition {
             serviceDictionary[self.serviceKey] = self
         }
     }
-}
-
-/// Provides the definition of an accumulation that is recalculated on each request.
-/// A fresh accumulation will be computed each time it is requested.
-final class FactoryAccumulationDefinition: AccumulationDefinition {
-    private let valueProvider: () throws -> Any
-
-    init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping () throws -> Key.AccumulatedValue) {
-        self.valueProvider = valueProvider
-    }
-
-    func getAccumulatedValue() throws -> Any {
-        try valueProvider()
-    }
-}
-
-/// Provides the definition of an accumulation that is calculated once and cached.
-/// The accumulated value is computed once per container and reused on subsequent requests.
-final class SingletonAccumulationDefinition: AccumulationDefinition {
-    private let lock = NSLock()
-    private var cachedAccumulated: Any? = nil
-    private let valueProvider: () throws -> Any
-
-    init<Key: AccumulationKey>(accumulationKey: Key.Type, valueProvider: @escaping () throws -> Key.AccumulatedValue) {
-        self.valueProvider = valueProvider
-    }
-
-    func getAccumulatedValue() throws -> Any {
-        if let value = self.cachedAccumulated {
-            // Double-checked locking for the accumulated value
-            return value
-        }
-
-        lock.lock()
-        defer { lock.unlock() }
-
-        if let value = self.cachedAccumulated {
-            return value
-        }
-
-        let value = try valueProvider()
-
-        self.cachedAccumulated = value
-        return value
-    }
-
 }
