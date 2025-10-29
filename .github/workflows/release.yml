@@ -22,4 +22,5 @@ jobs:
           allowUpdates: true
           draft: true
           generateReleaseNotes: true
+          immutableCreate: true
           token: ${{ secrets.GITHUB_TOKEN }}
