@@ -17,7 +17,7 @@ let package = Package(
             targets: ["WhoopDIKit",]),
     ],
     dependencies: [
-        .package(url: "https://github.com/swiftlang/swift-syntax.git", from: "600.0.0-latest")
+        .package(url: "https://github.com/swiftlang/swift-syntax.git", exact: "600.0.1")
     ],
     targets: [
         .target(
