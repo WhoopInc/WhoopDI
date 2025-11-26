@@ -31,6 +31,7 @@ open class DependencyModule {
     ///     - name:  An optional name which can be used to disambiguate between multiple dependencies of the same type.
     ///     - factory: A closure which defines the dependency.
     /// - Returns: The dependency provided by the factory closure.
+    @available(*, deprecated, message: "Use WhoopDI.inject { } to provide local dependencies instead.", renamed: "factory")
     public final func factoryWithParams<T, Param>(name: String? = nil, factory: @escaping (Param) throws -> T) {
         dependencies.append(FactoryDefinition(name: name, factory: factoryConverter(name, factory)))
     }
@@ -51,6 +52,7 @@ open class DependencyModule {
     ///     - name:  An optional name which can be used to disambiguate between multiple dependencies of the same type.
     ///     - factory: A closure which defines the dependency.
     /// - Returns: The dependency provided by the factory closure. This will be the same instance each time it is requested.
+    @available(*, deprecated, message: "Use WhoopDI.inject { } to provide local dependencies instead.", renamed: "singleton")
     public final func singletonWithParams<T, Param>(name: String? = nil, factory: @escaping (Param) throws -> T) {
         dependencies.append(SingletonDefinition(name: name, factory: factoryConverter(name, factory)))
     }

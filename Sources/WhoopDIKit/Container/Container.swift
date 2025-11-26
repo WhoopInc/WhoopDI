@@ -96,7 +96,7 @@ public final class Container {
     /// - Parameters:
     ///   - name: An optional name for the dependency. This can help disambiguate between dependencies of the same type.
     ///   - params: Optional parameters which will be provided to dependencies which require them (i.e dependencies using defintiions such as
-    ///   (factoryWithParams, etc).
+    ///   (factoryWithParams, etc). Note: params are now deprecated, please provide local dependencies via the localDefinition.
     ///   - localDefinition: A local module definition which can be used to supply local dependencies to the object graph prior to injection.
     /// - Returns: The requested dependency.
     public func inject<T>(_ name: String? = nil,
