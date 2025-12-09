@@ -33,7 +33,7 @@ There are a few simple steps to setup WhoopDI in your project:
 
 ## Dependency Modules
 
-You can define your dependencies in a module by creating a class that conforms to `DependencyModule`. This class should define a `registerDependencies` method which will be called by WhoopDI to register your dependencies.
+You can define your dependencies in a module by creating a class that conforms to `DependencyModule`. This class should define a `defineDependencies` method which will be called by WhoopDI to register your dependencies.
 
 ```swift
 final class MyModule: DependencyModule {
@@ -71,10 +71,14 @@ struct InjectableWithNamedDependency: Equatable {
     let anImportantNumber: Int
 }
 
+// ...
+
+let container = Container(modules: [FakeTestModuleForInjecting()])
+
 let dependency: InjectableWithNamedDependency = container.inject()
 ```
 
-In the above example, we do not need to define a factory for `InjectableWithNamedDependency`. Since this is decorated with the Injectable macro WhoopDI will automatically create it and provide it's dependencies when it is requested via an `inject` or `get` method.
+In the above example, we do not need to define a factory for `InjectableWithNamedDependency`. Since this is decorated with the Injectable macro, WhoopDI will automatically create it and provide its dependencies when it is requested via an `inject` or `get` method (assumming the `FakeTestModuleForInjecting` module has been added to the dependency graph).
 
 If you need to provide a named dependency, you can use the `@InjectableName` macro to specify the name of the dependency you want to inject.
 
@@ -105,13 +109,13 @@ let myNamedFeature: MyNamedFeature = WhoopDI.inject("named")
 These inject methods will piece together the dependencies you have registered and return the top level dependency you are requesting. A few notes here:
 - Type lookup happens via generics, so WhoopDI must be able to to infer the type you are requesting.
 - If you have multiple dependencies of the same type, you can use the `named` parameter to specify which dependency you want.
-- If the dependency you are requesting is not registered, WhoopDI will fill throw a fatal error (at runtime).
+- If the dependency you are requesting is not registered, WhoopDI will throw a fatal error (at runtime).
 - You should inject only your top level dependencies (e.g. view controllers, services, etc.). Most of your code should be unaware of WhoopDI.
     - In other words, you should not invoke `WhoopDI.inject` in your lower level dependencies. They should be provided in a module, then injected into your top level dependencies.
 
 ### Local Module Inject
 
-Sometimes you have local variables which you want to pass into the dependency graph. This can be achieved by using the `inject` with closure method of WhoopDI.`
+Sometimes you have local variables which you want to pass into the dependency graph. This can be achieved by using the `inject` with closure method of WhoopDI.
 
 ```swift
 let theAnswer = 42

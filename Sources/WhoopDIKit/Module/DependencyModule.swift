@@ -100,7 +100,7 @@ open class DependencyModule {
             accumulatedDependency: SingletonDefinition(name: nil, factory: { _ in try provideValue() })))
     }
 
-    /// Fetches a dependency from the object graph. This is intended to be used within the factory closure provided to `factory`, `single`, etc.
+    /// Fetches a dependency from the object graph. This is intended to be used within the factory closure provided to `factory`, `singleton`, etc.
     /// For example:
     /// ```
     /// factoryWithParams { params in
