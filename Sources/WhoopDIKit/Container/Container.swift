@@ -69,6 +69,10 @@ public final class Container {
         return ContainerContext.withContainer(self) {
             do {
                 return try get(name, params)
+            } catch let error(let description) as CustomError {
+                print("Failed with custom error")
+                Thread.callStackSymbols.forEach { print($0) }
+                fatalError("WhoopDI inject failed with error: \(error.description)")
             } catch {
                 print("Inject failed with stack trace:")
                 Thread.callStackSymbols.forEach { print($0) }
