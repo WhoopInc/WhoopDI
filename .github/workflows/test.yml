@@ -7,6 +7,8 @@ on:
 jobs:
   test:
     runs-on: macos-latest
+    permissions:
+      contents: read
     steps:
     - uses: maxim-lobanov/setup-xcode@v1
       with:

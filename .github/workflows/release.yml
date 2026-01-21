@@ -9,6 +9,8 @@ jobs:
   create_release:
     name: Create Release
     runs-on: macos-latest
+    permissions:
+      contents: write
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
