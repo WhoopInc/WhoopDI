@@ -77,6 +77,18 @@ public final class Container {
         }
     }
 
+    public func inject<T>(_ name: String? = nil, _ params: Any? = nil) async -> T {
+        return await ContainerContext.withContainerAsync(self) {
+            do {
+                return try await get(name, params)
+            } catch {
+                print("Inject failed with stack trace:")
+                Thread.callStackSymbols.forEach { print($0) }
+                fatalError("WhoopDI inject failed with error: \(error)")
+            }
+        }
+    }
+
     /// Injects a dependency into your code, overlaying local dependencies on top of the object graph.
     ///
     /// The injected dependency will have all of it's sub-dependencies provided by the object graph defined in WhoopDI.
@@ -152,6 +164,25 @@ public final class Container {
                   /// Get the definition from teh parent if it doesn't exist here.
                   /// **Important**: need to pass grandparent as its parent
                   let value = try parent.getDefinition(serviceKey)?.get(params: params, parent: parent.parent) as? T {
+            return value
+        } else if let injectable = T.self as? any Injectable.Type {
+            return try injectable.inject(container: self) as! T
+        } else  {
+            throw DependencyError.createMissingDependencyError(missingDependency: ServiceKey(T.self, name: name),
+                                                               serviceDict: serviceDict)
+        }
+    }
+
+    func get<T>(_ name: String? = nil,
+                _ params: Any? = nil) async throws -> T {
+        let serviceKey = ServiceKey(T.self, name: name)
+        let definition = getDefinition(serviceKey)
+        if let value = try await definition?.get(params: params, parent: parent) as? T {
+            return value
+        } else if let parent = parent,
+                  /// Get the definition from teh parent if it doesn't exist here.
+                  /// **Important**: need to pass grandparent as its parent
+                  let value = try await parent.getDefinition(serviceKey)?.get(params: params, parent: parent.parent) as? T {
             return value
         } else if let injectable = T.self as? any Injectable.Type {
             return try injectable.inject(container: self) as! T

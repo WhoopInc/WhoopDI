@@ -30,4 +30,8 @@ enum ContainerContext {
     static func withContainer<T>(_ container: Container, operation: () throws -> T) rethrows -> T {
         return try $currentContainer.withValue(SendableContainerWrapper(container), operation: operation)
     }
+
+    static func withContainerAsync<T>(_ container: Container, operation: () async throws -> T) async rethrows -> T {
+        return try await $currentContainer.withValue(SendableContainerWrapper(container), operation: operation)
+    }
 }

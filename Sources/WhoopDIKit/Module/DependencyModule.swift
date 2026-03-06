@@ -24,7 +24,11 @@ open class DependencyModule {
     public final func factory<T>(name: String? = nil, factory: @escaping () throws -> T) {
         dependencies.append(FactoryDefinition(name: name, factory: { _ in try factory() }))
     }
-    
+
+    public final func asyncFactory<T>(name: String? = nil, factory: @escaping () async throws -> T) {
+        dependencies.append(AsyncFactoryDefinition(name: name, factory: { _ in try await factory() }))
+    }
+
     /// Defines a dependency which will be freshly created each time it is requested. This version of the factory method provides parameters to the factory closure.
     /// The parameters are ultimately provided via the `inject` method of `WhoopDI`
     /// - Parameters:
@@ -36,6 +40,7 @@ open class DependencyModule {
         dependencies.append(FactoryDefinition(name: name, factory: factoryConverter(name, factory)))
     }
     
+
     /// Defines a dependency which will be reused any time it is requested. The returned instance is effectively a non-static singleton.
     /// The parameters are ultimately provided via the `inject` method of `WhoopDI`
     /// - Parameters:
@@ -115,7 +120,15 @@ open class DependencyModule {
             return try WhoopDI.get(name, params)
         }
     }
-    
+
+    public final func asyncGet<T>(_ name: String? = nil, params: Any? = nil) async throws -> T {
+        if let containerWrapper = ContainerContext.currentContainer {
+            return try await containerWrapper.container.get(name, params)
+        } else {
+            return try await WhoopDI.appContainer.get(name, params)
+        }
+    }
+
     /// Implement this method to define your dependencies.
     open func defineDependencies() { }
     

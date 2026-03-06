@@ -3,6 +3,7 @@ import Foundation
 protocol DependencyDefinition {
     var serviceKey: ServiceKey { get }
     func get(params: Any?, parent: Container?) throws -> Any
+    func get(params: Any?, parent: Container?) async throws -> Any
 
     func insert(into serviceDictionary: ServiceDictionary<DependencyDefinition>)
 }
@@ -35,6 +36,25 @@ final class FactoryDefinition: DependencyDefinition {
 
     func get(params: Any?, parent: Container?) throws -> Any {
         try verifyNotNil(value: factory(params))
+    }
+}
+
+final class AsyncFactoryDefinition: DependencyDefinition {
+    private let factory: (Any?) async throws -> Any
+    let serviceKey: ServiceKey
+
+    init<T>(name: String?, factory: @escaping (Any?) async throws -> T) {
+        self.serviceKey = ServiceKey(T.self, name: name)
+        self.factory = { params in try await factory(params) }
+    }
+
+    func get(params: Any?, parent: Container?) async throws -> Any {
+        try await verifyNotNil(value: factory(params))
+    }
+
+    func get(params: Any?, parent: Container?) throws -> Any {
+        // This should actually throw - it means this was called via non-async
+        ""
     }
 }
 
