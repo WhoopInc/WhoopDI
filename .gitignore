@@ -8,3 +8,4 @@ DerivedData/
 .swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata
 WhoopDIKit.sha256
 xcframeworks/
+.claude/settings.local.json
