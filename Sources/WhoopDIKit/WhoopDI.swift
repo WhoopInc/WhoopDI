@@ -6,8 +6,9 @@ public final class WhoopDI: DependencyRegister {
     /// This should only be called once when your application launches (and before WhoopDI is used).
     /// By default all options are disabled if you do not call this method.
     public static func setup(modules: [DependencyModule],
-                             options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
-        appContainer = Container(modules: modules, options: options)
+                             options: WhoopDIOptionProvider = defaultWhoopDIOptions(),
+                             fatalErrorHandler: @escaping FatalErrorHandler = defaultFatalErrorHandler()) {
+        appContainer = Container(modules: modules, options: options, fatalErrorHandler: fatalErrorHandler)
     }
     
     /// Injects a dependency into your code.
