@@ -3,6 +3,7 @@ import Foundation
 public final class Container {
     private let options: WhoopDIOptionProvider
     private let parent: Container?
+    let fatalErrorHandler: FatalErrorHandler
 
     private let serviceDict = ServiceDictionary<DependencyDefinition>()
 
@@ -19,9 +20,11 @@ public final class Container {
     /// Dependencies are registered in dependency order, with leaf modules (those with no dependencies) being registered first.
     public init(modules: [DependencyModule] = [],
                 parent: Container? = nil,
-                options: WhoopDIOptionProvider = defaultWhoopDIOptions()) {
+                options: WhoopDIOptionProvider = defaultWhoopDIOptions(),
+                fatalErrorHandler: @escaping FatalErrorHandler = defaultFatalErrorHandler()) {
         self.parent = parent
         self.options = options
+        self.fatalErrorHandler = fatalErrorHandler
         localDependencyGraph = ThreadSafeDependencyGraph(options: options)
         registerModules(modules: modules)
     }
@@ -44,9 +47,11 @@ public final class Container {
     ///   - localDefinition: A closure that defines the dependencies for this container
     public init(parent: Container? = nil,
                 options: WhoopDIOptionProvider = defaultWhoopDIOptions(),
+                fatalErrorHandler: @escaping FatalErrorHandler = defaultFatalErrorHandler(),
                 _ localDefinition: (DependencyModule) -> Void) {
         self.parent = parent
         self.options = options
+        self.fatalErrorHandler = fatalErrorHandler
         localDependencyGraph = ThreadSafeDependencyGraph(options: options)
         let localModule = DependencyModule()
         localDefinition(localModule)
@@ -72,7 +77,7 @@ public final class Container {
             } catch {
                 print("Inject failed with stack trace:")
                 Thread.callStackSymbols.forEach { print($0) }
-                fatalError("WhoopDI inject failed with error: \(error)")
+                fatalErrorHandler("WhoopDI inject failed with error: \(error)")
             }
         }
     }
@@ -117,7 +122,7 @@ public final class Container {
             return localDependencyGraph.acquireDependencyGraph { localServiceDict in
                 // Nested local injects are not currently supported. Fail fast here.
                 guard !isLocalInjectActive else {
-                    fatalError("Nesting WhoopDI.inject with local definitions is not currently supported")
+                    fatalErrorHandler("Nesting WhoopDI.inject with local definitions is not currently supported")
                 }
 
                 isLocalInjectActive = true
@@ -135,7 +140,7 @@ public final class Container {
                 } catch {
                     print("Inject failed with stack trace:")
                     Thread.callStackSymbols.forEach { print($0) }
-                    fatalError("WhoopDI inject failed with error: \(error)")
+                    fatalErrorHandler("WhoopDI inject failed with error: \(error)")
                 }
             }
         }
@@ -201,7 +206,7 @@ public final class Container {
     /// - Parameter modules: An array of dependency modules to register with the child container
     /// - Returns: A new container instance that inherits from this container
     public func createChild(_ modules: [DependencyModule] = []) -> Self {
-        .init(modules: modules, parent: self, options: options)
+        .init(modules: modules, parent: self, options: options, fatalErrorHandler: fatalErrorHandler)
     }
 
     /// Creates a child container that inherits all dependencies from this container.
@@ -219,7 +224,7 @@ public final class Container {
     /// - Parameter localDefinition: A closure that defines additional or overriding dependencies
     /// - Returns: A new container instance that inherits from this container
     public func createChild(_ localDefinition: (DependencyModule) -> Void) -> Self {
-        .init(parent: self, options: options, localDefinition)
+        .init(parent: self, options: options, fatalErrorHandler: fatalErrorHandler, localDefinition)
     }
 }
 

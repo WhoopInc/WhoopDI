@@ -152,11 +152,12 @@ class ContainerTests {
     }
 
     private func createContainer(modules: [DependencyModule],
-                                 localInjectWithoutMutation: Bool = true) -> Container {
+                                 localInjectWithoutMutation: Bool = true,
+                                 fatalErrorHandler: @escaping FatalErrorHandler = defaultFatalErrorHandler()) -> Container {
         let options = MockOptionProvider(options: [
             .threadSafeLocalInject: true,
             .localInjectWithoutMutation: localInjectWithoutMutation
         ])
-        return .init(modules: modules, options: options)
+        return .init(modules: modules, options: options, fatalErrorHandler: fatalErrorHandler)
     }
 }
